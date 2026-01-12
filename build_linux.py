@@ -198,7 +198,7 @@ def main():
         print(f'[!] INFO: Working with Podman images belonging to "{pwd.getpwuid(os.getuid()).pw_name}" (UID {os.getuid()})')
         runtime = 'podman'
     else:
-        print(f'Docker container engine is chosen (default)')
+        print('Docker container engine is chosen (default)')
         runtime = 'docker'
 
     print(f'Going to build the Linux kernel for {args.arch}')
