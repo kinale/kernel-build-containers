@@ -56,7 +56,7 @@ while [[ $# -gt 0 ]]; do
 			echo "Force to use the Podman container engine"
 			echo "[!] INFO: Working with Podman images belonging to \"$(id -un)\" (UID $(id -u))"
 			RUNTIME="podman"
-			RUNTIME_SPECIFIC_ARGS="--userns=keep-id"
+			RUNTIME_SPECIFIC_ARGS="--userns=keep-id --net=pasta:-4"
 		fi
 		shift
 		;;
