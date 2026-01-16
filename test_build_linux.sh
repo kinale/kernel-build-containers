@@ -27,6 +27,7 @@ declare -A EXPECTED_IMAGES=(
 fail() { echo "[-] $*"; exit 1; }
 
 prepare_deps(){
+	$DELIMITER
 	echo "Preparing dependencies..."
 
 	for cmd in wget tar expect; do
@@ -65,6 +66,77 @@ prepare_compilers(){
 
 run_tests(){
 	prepare_compilers
+
+	$DELIMITER
+	echo "Testing some invalid arguments..."
+	python3 -m coverage run -a --branch build_linux.py -p -d -a "${ARCHS[0]}" -c "${COMPILERS[0]}" -s "$SRC_DIR" -o "$OUT_DIR" && exit 1
+	python3 -m coverage run -a --branch build_linux.py $RUNTIME_FLAG -a "${ARCHS[0]}" -c "${COMPILERS[0]}" -s "$SRC_DIR" -o "$OUT_DIR" -- O=invalid && exit 1
+	python3 -m coverage run -a --branch build_linux.py $RUNTIME_FLAG -a "${ARCHS[0]}" -c "${COMPILERS[0]}" -s "$SRC_DIR" -o "$OUT_DIR" -- CC=invalid && exit 1
+	python3 -m coverage run -a --branch build_linux.py $RUNTIME_FLAG -a "${ARCHS[0]}" -c "${COMPILERS[0]}" -s "$SRC_DIR" -o "$OUT_DIR" -- -j1 && exit 1
+	python3 -m coverage run -a --branch build_linux.py $RUNTIME_FLAG -a "${ARCHS[0]}" -c "${COMPILERS[0]}" -s "$SRC_DIR" -o "$OUT_DIR" -- ARCH=invalid && exit 1
+	python3 -m coverage run -a --branch build_linux.py $RUNTIME_FLAG -a "${ARCHS[0]}" -c "${COMPILERS[0]}" -s "$SRC_DIR" -o "$OUT_DIR" -- CROSS_COMPILE=invalid && exit 1
+	python3 -m coverage run -a --branch build_linux.py $RUNTIME_FLAG -a "${ARCHS[0]}" -c "${COMPILERS[0]}" -s "$SRC_DIR" -o /path/INVALID -- defconfig && exit 1
+	python3 -m coverage run -a --branch build_linux.py $RUNTIME_FLAG -a "${ARCHS[0]}" -c "${COMPILERS[0]}" -s /path/INVALID -o "$OUT_DIR" -- defconfig && exit 1
+	python3 -m coverage run -a --branch build_linux.py $RUNTIME_FLAG -a "${ARCHS[0]}" -c "${COMPILERS[0]}" -s "$SRC_DIR" -o "$OUT_DIR" -k /path/IVALID.conf && exit 1
+
+	$DELIMITER
+	echo "Testing quiet building..."
+	python3 -m coverage run -a --branch build_linux.py $RUNTIME_FLAG -a "${ARCHS[0]}" -c "${COMPILERS[0]}" -s "$SRC_DIR" -o "$OUT_DIR" -q -- defconfig
+
+	$DELIMITER
+	echo "Testing single-cpu building..."
+	python3 -m coverage run -a --branch build_linux.py $RUNTIME_FLAG -a "${ARCHS[0]}" -c "${COMPILERS[0]}" -s "$SRC_DIR" -o "$OUT_DIR" -t -- defconfig
+
+	$DELIMITER
+	echo "Testing building with the same directory..."
+	python3 -m coverage run -a --branch build_linux.py $RUNTIME_FLAG -a "${ARCHS[0]}" -c "${COMPILERS[0]}" -s "$SRC_DIR" -- defconfig
+	python3 -m coverage run -a --branch build_linux.py $RUNTIME_FLAG -a "${ARCHS[0]}" -c "${COMPILERS[0]}" -s "$SRC_DIR" -o "$SRC_DIR" -- defconfig
+
+	$DELIMITER
+	echo "Testing bulding with external config..."
+	python3 -m coverage run -a --branch build_linux.py $RUNTIME_FLAG -a "${ARCHS[0]}" -c "${COMPILERS[0]}" -s "$SRC_DIR" -o "$SRC_DIR" -- mrproper
+	python3 -m coverage run -a --branch build_linux.py $RUNTIME_FLAG -a "${ARCHS[0]}" -c "${COMPILERS[0]}" -s "$SRC_DIR" -o "$OUT_DIR" -- defconfig
+	cp "${OUT_DIR}/${ARCHS[0]}__${COMPILERS[0]}/.config" "./config"
+	python3 -m coverage run -a --branch build_linux.py \
+		$RUNTIME_FLAG -a "${ARCHS[0]}" -c "${COMPILERS[0]}" -s "$SRC_DIR" -k "./config" && exit 1
+	python3 -m coverage run -a --branch build_linux.py \
+		$RUNTIME_FLAG -a "${ARCHS[0]}" -c "${COMPILERS[0]}" -s "$SRC_DIR" -o "$OUT_DIR" -k "./config" -- defconfig
+	python3 -m coverage run -a --branch build_linux.py \
+		$RUNTIME_FLAG -a "${ARCHS[0]}" -c "${COMPILERS[0]}" -s "$SRC_DIR" -o "$OUT_DIR" -k "./config" -- defconfig
+	echo "# CONFIG_EXAMPLE_FOOBAR is not set" >> "./config"
+	python3 -m coverage run -a --branch build_linux.py \
+		$RUNTIME_FLAG -a "${ARCHS[0]}" -c "${COMPILERS[0]}" -s "$SRC_DIR" -o "$OUT_DIR" -k "./config" -- defconfig && exit 1
+
+	$DELIMITER
+	echo "Testing interruption handling..."
+	python3 -m coverage run -a --branch build_linux.py $RUNTIME_FLAG -a "${ARCHS[0]}" -c "${COMPILERS[0]}" -s "$SRC_DIR" -o "$OUT_DIR" -- mrproper
+	python3 -m coverage run -a --branch build_linux.py $RUNTIME_FLAG -a "${ARCHS[0]}" -c "${COMPILERS[0]}" -s "$SRC_DIR" -o "$OUT_DIR" -- defconfig
+	expect << EOF
+spawn python3 -m coverage run -a --branch build_linux.py -t $RUNTIME_FLAG -a "${ARCHS[0]}" -c "${COMPILERS[0]}" -s "$SRC_DIR" -o "$OUT_DIR"
+set timeout 2
+expect {
+	timeout {
+		send "\x03"
+		expect eof
+	}
+}
+EOF
+	expect << EOF
+spawn python3 -m coverage run -a --branch build_linux.py $RUNTIME_FLAG -a "${ARCHS[0]}" -c "${COMPILERS[0]}" -s "$SRC_DIR" -o "$OUT_DIR" -- menuconfig
+set timeout 5
+expect {
+	timeout {
+		send "\x03"
+		send Y
+		expect eof
+	}
+}
+EOF
+	python3 -m coverage run -a --branch build_linux.py $RUNTIME_FLAG -a "${ARCHS[0]}" -c "${COMPILERS[0]}" -s "$SRC_DIR" -o "$SRC_DIR" -- mrproper
+	python3 -m coverage run -a --branch build_linux.py $RUNTIME_FLAG -a "${ARCHS[0]}" -c "${COMPILERS[0]}" -s "$SRC_DIR" -o "$OUT_DIR" -- mrproper
+	if [ -e "./config" ]; then
+		rm "./config"
+	fi
 
 	$DELIMITER
 	echo "Testing kernel building..."
