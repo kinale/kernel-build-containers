@@ -22,29 +22,29 @@ License: GPL-3.0.
 ## Supported features
 
 __Supported kernel build targets:__
- - `x86_64`
- - `i386`
- - `arm64` (toolchain name `aarch64`)
- - `arm`
- - `riscv` (toolchain name `riscv64`)
- - `powerpc` (three toolchains: `powerpc`, `powerpc64`, and `powerpc64le`)
+ - `x86_64` (using the default toolchain)
+ - `i386` (using the default toolchain)
+ - `arm64` (using the `aarch64` toolchain)
+ - `arm` (using the `arm` toolchain)
+ - `riscv` (using the `riscv64` toolchain)
+ - `powerpc` (using one of three toolchains: `powerpc`, `powerpc64`, or `powerpc64le`)
 
 __Supported GCC versions:__
 
-|             | x86_64 | i386 | arm64 | arm | riscv | powerpc | powerpc64 | powerpc64le |
-| ----------- | ------ | ---- | ----- | --- | ----- | ------- | --------- | ----------- |
-| __gcc-4.9__ | ✓      | ✓    | *     | *   |       | *       |           | *           |
-| __gcc-5__   | ✓      | ✓    | ✓     | ✓   |       | ✓       | ✓         | ✓           |
-| __gcc-6__   | ✓      | ✓    | ✓     | ✓   |       | ✓       | ✓         | ✓           |
-| __gcc-7__   | ✓      | ✓    | ✓     | ✓   | ✓     | ✓       | ✓         | ✓           |
-| __gcc-8__   | ✓      | ✓    | ✓     | ✓   | ✓     | ✓       | ✓         | ✓           |
-| __gcc-9__   | ✓      | ✓    | ✓     | ✓   | ✓     | ✓       | ✓         | ✓           |
-| __gcc-10__  | ✓      | ✓    | ✓     | ✓   | ✓     | ✓       | ✓         | ✓           |
-| __gcc-11__  | ✓      | ✓    | ✓     | ✓   | ✓     | ✓       | ✓         | ✓           |
-| __gcc-12__  | ✓      | ✓    | ✓     | ✓   | ✓     | ✓       | ✓         | ✓           |
-| __gcc-13__  | ✓      | ✓    | ✓     | ✓   | ✓     | ✓       | ✓         | ✓           |
-| __gcc-14__  | ✓      | ✓    | ✓     | ✓   | ✓     | ✓       | ✓         | ✓           |
-| __gcc-15__  | ✓      | ✓    | ✓     | ✓   | ✓     | ✓       | ✓         | ✓           |
+|             | x86_64/i386 | aarch64 | arm | riscv64 | powerpc | powerpc64 | powerpc64le |
+| ----------- | ----------- | ------- | --- | ------- | ------- | --------- | ----------- |
+| __gcc-4.9__ | ✓           | *       | *   |         | *       |           | *           |
+| __gcc-5__   | ✓           | ✓       | ✓   |         | ✓       | ✓         | ✓           |
+| __gcc-6__   | ✓           | ✓       | ✓   |         | ✓       | ✓         | ✓           |
+| __gcc-7__   | ✓           | ✓       | ✓   | ✓       | ✓       | ✓         | ✓           |
+| __gcc-8__   | ✓           | ✓       | ✓   | ✓       | ✓       | ✓         | ✓           |
+| __gcc-9__   | ✓           | ✓       | ✓   | ✓       | ✓       | ✓         | ✓           |
+| __gcc-10__  | ✓           | ✓       | ✓   | ✓       | ✓       | ✓         | ✓           |
+| __gcc-11__  | ✓           | ✓       | ✓   | ✓       | ✓       | ✓         | ✓           |
+| __gcc-12__  | ✓           | ✓       | ✓   | ✓       | ✓       | ✓         | ✓           |
+| __gcc-13__  | ✓           | ✓       | ✓   | ✓       | ✓       | ✓         | ✓           |
+| __gcc-14__  | ✓           | ✓       | ✓   | ✓       | ✓       | ✓         | ✓           |
+| __gcc-15__  | ✓           | ✓       | ✓   | ✓       | ✓       | ✓         | ✓           |
 
 *\* marks a GCC version that doesn't support `gcc-plugins`*
 
