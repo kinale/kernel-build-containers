@@ -283,7 +283,8 @@ options:
   -h, --help            show this help message and exit
   -d, --docker          force to use the Docker container engine (default)
   -p, --podman          force to use the Podman container engine instead of default Docker
-  -a, --arch ARCH       build target architecture (x86_64 / i386 / arm64 / arm / riscv)
+  -a, --arch ARCH       build target architecture (x86_64 / i386 / arm64 / arm / riscv /
+                        powerpc / powerpc64 / powerpc64le)
   -c, --compiler COMPILER
                         compiler for building (clang-5 / clang-6 / clang-7 / clang-8 /
                         clang-9 / clang-10 / clang-11 / clang-12 / clang-13 / clang-14 /
