@@ -22,30 +22,33 @@ License: GPL-3.0.
 ## Supported features
 
 __Supported kernel build targets:__
- - `x86_64`
- - `i386`
- - `arm64` (toolchain name `aarch64`)
- - `arm`
- - `riscv` (toolchain name `riscv64`)
+ - `x86_64` (using the default toolchain)
+ - `i386` (using the default toolchain)
+ - `arm64` (using the `aarch64` toolchain)
+ - `arm` (using the `arm` toolchain)
+ - `riscv` (using the `riscv64` toolchain)
+ - `powerpc` (using one of three toolchains: `powerpc`, `powerpc64`, or `powerpc64le`)
 
 __Supported GCC versions:__
 
-|             | x86_64 | i386 | arm64 | arm | riscv |
-| ----------- | ------ | ---- | ----- | --- | ----- |
-| __gcc-4.9__ | ✓      | ✓    | *     | *   |       |
-| __gcc-5__   | ✓      | ✓    | ✓     | ✓   |       |
-| __gcc-6__   | ✓      | ✓    | ✓     | ✓   |       |
-| __gcc-7__   | ✓      | ✓    | ✓     | ✓   | ✓     |
-| __gcc-8__   | ✓      | ✓    | ✓     | ✓   | ✓     |
-| __gcc-9__   | ✓      | ✓    | ✓     | ✓   | ✓     |
-| __gcc-10__  | ✓      | ✓    | ✓     | ✓   | ✓     |
-| __gcc-11__  | ✓      | ✓    | ✓     | ✓   | ✓     |
-| __gcc-12__  | ✓      | ✓    | ✓     | ✓   | ✓     |
-| __gcc-13__  | ✓      | ✓    | ✓     | ✓   | ✓     |
-| __gcc-14__  | ✓      | ✓    | ✓     | ✓   | ✓     |
-| __gcc-15__  | ✓      | ✓    | ✓     | ✓   | ✓     |
+|             | x86_64/i386 | aarch64 | arm | riscv64 | powerpc | powerpc64 | powerpc64le |
+| ----------- | ----------- | ------- | --- | ------- | ------- | --------- | ----------- |
+| __gcc-4.9__ | ✓           | *       | *   |         | *       |           | *           |
+| __gcc-5__   | ✓           | ✓       | ✓   |         | ✓       | ✓         | ✓           |
+| __gcc-6__   | ✓           | ✓       | ✓   |         | ✓       | ✓         | ✓           |
+| __gcc-7__   | ✓           | ✓       | ✓   | ✓       | ✓       | ✓         | ✓           |
+| __gcc-8__   | ✓           | ✓       | ✓   | ✓       | ✓       | ✓         | ✓           |
+| __gcc-9__   | ✓           | ✓       | ✓   | ✓       | ✓       | ✓         | ✓           |
+| __gcc-10__  | ✓           | ✓       | ✓   | ✓       | ✓       | ✓         | ✓           |
+| __gcc-11__  | ✓           | ✓       | ✓   | ✓       | ✓       | ✓         | ✓           |
+| __gcc-12__  | ✓           | ✓       | ✓   | ✓       | ✓       | ✓         | ✓           |
+| __gcc-13__  | ✓           | ✓       | ✓   | ✓       | ✓       | ✓         | ✓           |
+| __gcc-14__  | ✓           | ✓       | ✓   | ✓       | ✓       | ✓         | ✓           |
+| __gcc-15__  | ✓           | ✓       | ✓   | ✓       | ✓       | ✓         | ✓           |
 
 *\* marks a GCC version that doesn't support `gcc-plugins`*
+
+The containers also provide the corresponding versions of `g++`.
 
 __Supported Clang versions:__
 
@@ -280,7 +283,8 @@ options:
   -h, --help            show this help message and exit
   -d, --docker          force to use the Docker container engine (default)
   -p, --podman          force to use the Podman container engine instead of default Docker
-  -a, --arch ARCH       build target architecture (x86_64 / i386 / arm64 / arm / riscv)
+  -a, --arch ARCH       build target architecture (x86_64 / i386 / arm64 / arm / riscv /
+                        powerpc / powerpc64 / powerpc64le)
   -c, --compiler COMPILER
                         compiler for building (clang-5 / clang-6 / clang-7 / clang-8 /
                         clang-9 / clang-10 / clang-11 / clang-12 / clang-13 / clang-14 /
