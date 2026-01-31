@@ -53,9 +53,9 @@ RUN set -ex; \
     if [ "$CLANG_VERSION" ]; then \
       if [ "$CLANG_VERSION" = "5" ] || [ "$CLANG_VERSION" = "6" ]; then \
         CLANG_VERSION="${CLANG_VERSION}.0"; \
-        apt-get install -y -q clang-${CLANG_VERSION} lld-${CLANG_VERSION} clang-tools-6.0; \
+        apt-get install -y -q --no-install-recommends clang-${CLANG_VERSION} lld-${CLANG_VERSION} clang-tools-6.0; \
       else \
-        apt-get install -y -q clang-${CLANG_VERSION} lld-${CLANG_VERSION} clang-tools-${CLANG_VERSION}; \
+        apt-get install -y -q --no-install-recommends clang-${CLANG_VERSION} lld-${CLANG_VERSION} clang-tools-${CLANG_VERSION}; \
       fi; \
       if [ "$CLANG_VERSION" != "5.0" ] && [ "$CLANG_VERSION" != "6.0" ]; then \
         update-alternatives --install /usr/bin/llvm-strip llvm-strip /usr/bin/llvm-strip-${CLANG_VERSION} 100; \
