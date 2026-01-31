@@ -69,7 +69,7 @@ class ContainerImage:
                       '-t', self.clang_tag,
                       '-t', self.gcc_tag]
         try:
-            subprocess.run([self.runtime_cmd, 'buildx', 'version'], check=True, stdout=subprocess.PIPE)
+            subprocess.run(self.runtime_cmd +['buildx', 'version'], check=True, stdout=subprocess.PIPE)
             build_args = ['buildx'] + build_args
         except:
             print('[!] WARNING: buildx not available; using default builder '
