@@ -57,7 +57,6 @@ class ContainerImage:
             print(f'\nThe container image providing Clang {self.clang} and GCC {self.gcc} exists: {self.id}')
             return
 
-        print(f'\nBuild a container image providing Clang {self.clang} and GCC {self.gcc}')
         build_args = ['build',
                       '--build-arg', f'CLANG_VERSION={self.clang}',
                       '--build-arg', f'GCC_VERSION={self.gcc}',
@@ -68,15 +67,18 @@ class ContainerImage:
                       '--build-arg', f'GID={os.getgid()}',
                       '-t', self.clang_tag,
                       '-t', self.gcc_tag]
-        try:
-            subprocess.run(self.runtime_cmd +['buildx', 'version'], check=True, stdout=subprocess.PIPE)
+
+        out = subprocess.run(self.runtime_cmd +['buildx', 'version'], text=True, check=False, capture_output=True)
+        if out.returncode == 0:
             build_args = ['buildx'] + build_args
-        except:
-            print('[!] WARNING: buildx not available; using default builder '
-                  '(for optimized builds, see: https://docs.docker.com/go/buildx)')
+        else:
+            print('[!] WARNING: buildx is not available; consider installing it if you use Docker')
+
+        print(f'\nBuild a container image providing Clang {self.clang} and GCC {self.gcc}')
         if self.quiet:
             print('[!] INFO: Quiet mode, please wait...')
             build_args += ['-q']
+
         build_dir = ['.']
         cmd = self.runtime_cmd + build_args + build_dir
         subprocess.run(cmd, text=True, check=True)
