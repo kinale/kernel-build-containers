@@ -92,23 +92,11 @@ run_tests() {
 	done
 
 	echo -e $DELIMITER
-	echo "Testing invalid argument combinations (build_linux.py must return an error)..."
-	python3 -m coverage run -a --branch build_linux.py -p -d -a "${ARCHS[0]}" -c "${COMPILERS[0]}" -s "$SRC_DIR" -o "$OUT_DIR" && exit 1
-	python3 -m coverage run -a --branch build_linux.py $RUNTIME_FLAG -a "${ARCHS[0]}" -c "${COMPILERS[0]}" -s "$SRC_DIR" -o "$OUT_DIR" -- O=invalid && exit 1
-	python3 -m coverage run -a --branch build_linux.py $RUNTIME_FLAG -a "${ARCHS[0]}" -c "${COMPILERS[0]}" -s "$SRC_DIR" -o "$OUT_DIR" -- ARCH=invalid && exit 1
-	python3 -m coverage run -a --branch build_linux.py $RUNTIME_FLAG -a "${ARCHS[0]}" -c "${COMPILERS[0]}" -s "$SRC_DIR" -o "$OUT_DIR" -- CROSS_COMPILE=invalid && exit 1
-	python3 -m coverage run -a --branch build_linux.py $RUNTIME_FLAG -a "${ARCHS[0]}" -c "${COMPILERS[0]}" -s "$SRC_DIR" -o "$OUT_DIR" -- CC=invalid && exit 1
-	python3 -m coverage run -a --branch build_linux.py $RUNTIME_FLAG -a "${ARCHS[0]}" -c "${COMPILERS[0]}" -s "$SRC_DIR" -o "$OUT_DIR" -- -j1 && exit 1
-	python3 -m coverage run -a --branch build_linux.py $RUNTIME_FLAG -a "${ARCHS[0]}" -c "${COMPILERS[0]}" -s "$SRC_DIR" -o "$OUT_DIR" -k /path/INVALID.conf && exit 1
-	python3 -m coverage run -a --branch build_linux.py $RUNTIME_FLAG -a "${ARCHS[0]}" -c "${COMPILERS[0]}" -s /path/INVALID -o "$OUT_DIR" && exit 1
-	python3 -m coverage run -a --branch build_linux.py $RUNTIME_FLAG -a "${ARCHS[0]}" -c "${COMPILERS[0]}" -s "$SRC_DIR" -o /path/INVALID && exit 1
-
-	echo -e $DELIMITER
-	echo "Testing quiet building..."
+	echo "Testing quiet kernel building..."
 	python3 -m coverage run -a --branch build_linux.py $RUNTIME_FLAG -a "${ARCHS[0]}" -c "${COMPILERS[0]}" -s "$SRC_DIR" -o "$OUT_DIR" -q -- defconfig
 
 	echo -e $DELIMITER
-	echo "Testing single-cpu building..."
+	echo "Testing single-cpu kernel building..."
 	python3 -m coverage run -a --branch build_linux.py $RUNTIME_FLAG -a "${ARCHS[0]}" -c "${COMPILERS[0]}" -s "$SRC_DIR" -o "$OUT_DIR" -t -- defconfig
 
 	echo -e $DELIMITER
@@ -148,6 +136,18 @@ run_tests() {
 	echo "# CONFIG_EXAMPLE_FOOBAR is not set" >>"$PWD/testcfg"
 	python3 -m coverage run -a --branch build_linux.py $RUNTIME_FLAG -a "${ARCHS[0]}" -c "${COMPILERS[0]}" -s "$SRC_DIR" -o "$OUT_DIR" -k "$PWD/testcfg" && exit 1
 	rm "$PWD/testcfg"
+
+	echo -e $DELIMITER
+	echo "Testing invalid argument combinations (build_linux.py must return an error)..."
+	python3 -m coverage run -a --branch build_linux.py -p -d -a "${ARCHS[0]}" -c "${COMPILERS[0]}" -s "$SRC_DIR" -o "$OUT_DIR" && exit 1
+	python3 -m coverage run -a --branch build_linux.py $RUNTIME_FLAG -a "${ARCHS[0]}" -c "${COMPILERS[0]}" -s "$SRC_DIR" -o "$OUT_DIR" -- O=invalid && exit 1
+	python3 -m coverage run -a --branch build_linux.py $RUNTIME_FLAG -a "${ARCHS[0]}" -c "${COMPILERS[0]}" -s "$SRC_DIR" -o "$OUT_DIR" -- ARCH=invalid && exit 1
+	python3 -m coverage run -a --branch build_linux.py $RUNTIME_FLAG -a "${ARCHS[0]}" -c "${COMPILERS[0]}" -s "$SRC_DIR" -o "$OUT_DIR" -- CROSS_COMPILE=invalid && exit 1
+	python3 -m coverage run -a --branch build_linux.py $RUNTIME_FLAG -a "${ARCHS[0]}" -c "${COMPILERS[0]}" -s "$SRC_DIR" -o "$OUT_DIR" -- CC=invalid && exit 1
+	python3 -m coverage run -a --branch build_linux.py $RUNTIME_FLAG -a "${ARCHS[0]}" -c "${COMPILERS[0]}" -s "$SRC_DIR" -o "$OUT_DIR" -- -j1 && exit 1
+	python3 -m coverage run -a --branch build_linux.py $RUNTIME_FLAG -a "${ARCHS[0]}" -c "${COMPILERS[0]}" -s "$SRC_DIR" -o "$OUT_DIR" -k /path/INVALID.conf && exit 1
+	python3 -m coverage run -a --branch build_linux.py $RUNTIME_FLAG -a "${ARCHS[0]}" -c "${COMPILERS[0]}" -s /path/INVALID -o "$OUT_DIR" && exit 1
+	python3 -m coverage run -a --branch build_linux.py $RUNTIME_FLAG -a "${ARCHS[0]}" -c "${COMPILERS[0]}" -s "$SRC_DIR" -o /path/INVALID && exit 1
 
 	echo -e $DELIMITER
 	echo "Testing interruption handling..."
