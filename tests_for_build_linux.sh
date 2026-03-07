@@ -54,19 +54,21 @@ prepare_deps() {
 		fail "Working directory is not clean! Remove $SRC_DIR $OUT_DIR"
 	fi
 
-	mkdir -p $SRC_DIR $OUT_DIR
-	tar -xf $SRC_TARBALL -C $SRC_DIR --strip-components=1
+	mkdir -p "$SRC_DIR" "$OUT_DIR"
+	tar -xf "$SRC_TARBALL" -C "$SRC_DIR" --strip-components=1
 }
 
 prepare_compilers() {
 	$DELIMITER
 	echo "Preparing compilers..."
 	for compiler in "${COMPILERS[@]}"; do
-		python3 manage_images.py $RUNTIME_FLAG -b $compiler
+		python3 manage_images.py $RUNTIME_FLAG -b "$compiler"
 	done
 }
 
 run_tests() {
+	# Use $RUNTIME_FLAG without quotes since it may be empty (default value)
+
 	prepare_compilers
 
 	$DELIMITER
