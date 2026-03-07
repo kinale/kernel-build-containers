@@ -81,7 +81,7 @@ run_tests() {
 	python3 -m coverage run -a --branch build_linux.py $RUNTIME_FLAG -a "${ARCHS[0]}" -c "${COMPILERS[0]}" -s "$SRC_DIR" -o "$OUT_DIR" -- CROSS_COMPILE=invalid && exit 1
 	python3 -m coverage run -a --branch build_linux.py $RUNTIME_FLAG -a "${ARCHS[0]}" -c "${COMPILERS[0]}" -s "$SRC_DIR" -o /path/INVALID -- defconfig && exit 1
 	python3 -m coverage run -a --branch build_linux.py $RUNTIME_FLAG -a "${ARCHS[0]}" -c "${COMPILERS[0]}" -s /path/INVALID -o "$OUT_DIR" -- defconfig && exit 1
-	python3 -m coverage run -a --branch build_linux.py $RUNTIME_FLAG -a "${ARCHS[0]}" -c "${COMPILERS[0]}" -s "$SRC_DIR" -o "$OUT_DIR" -k /path/IVALID.conf && exit 1
+	python3 -m coverage run -a --branch build_linux.py $RUNTIME_FLAG -a "${ARCHS[0]}" -c "${COMPILERS[0]}" -s "$SRC_DIR" -o "$OUT_DIR" -k /path/INVALID.conf && exit 1
 
 	echo -e $DELIMITER
 	echo "Testing quiet building..."
@@ -97,7 +97,7 @@ run_tests() {
 	python3 -m coverage run -a --branch build_linux.py $RUNTIME_FLAG -a "${ARCHS[0]}" -c "${COMPILERS[0]}" -s "$SRC_DIR" -o "$SRC_DIR" -- defconfig
 
 	echo -e $DELIMITER
-	echo "Testing bulding with external config..."
+	echo "Testing building with external config..."
 	python3 -m coverage run -a --branch build_linux.py $RUNTIME_FLAG -a "${ARCHS[0]}" -c "${COMPILERS[0]}" -s "$SRC_DIR" -o "$SRC_DIR" -- mrproper
 	python3 -m coverage run -a --branch build_linux.py $RUNTIME_FLAG -a "${ARCHS[0]}" -c "${COMPILERS[0]}" -s "$SRC_DIR" -o "$OUT_DIR" -- defconfig
 	cp "${OUT_DIR}/${ARCHS[0]}__${COMPILERS[0]}/.config" "./config"
