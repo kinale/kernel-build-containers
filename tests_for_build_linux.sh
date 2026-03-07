@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -eu
 
-DELIMITER="echo -e \n##############################################"
+DELIMITER="\n##############################################"
 
 ARCHS=("x86_64" "i386" "arm64" "arm" "riscv" "powerpc" "powerpc64" "powerpc64le")
 COMPILERS=("gcc-13" "clang-15")
@@ -30,7 +30,7 @@ fail() {
 }
 
 prepare_deps() {
-	$DELIMITER
+	echo -e $DELIMITER
 	echo "Preparing dependencies..."
 
 	for cmd in wget tar expect; do
@@ -59,7 +59,7 @@ prepare_deps() {
 }
 
 prepare_compilers() {
-	$DELIMITER
+	echo -e $DELIMITER
 	echo "Preparing compilers..."
 	for compiler in "${COMPILERS[@]}"; do
 		python3 manage_images.py $RUNTIME_FLAG -b "$compiler"
@@ -71,7 +71,7 @@ run_tests() {
 
 	prepare_compilers
 
-	$DELIMITER
+	echo -e $DELIMITER
 	echo "Testing some invalid arguments..."
 	python3 -m coverage run -a --branch build_linux.py -p -d -a "${ARCHS[0]}" -c "${COMPILERS[0]}" -s "$SRC_DIR" -o "$OUT_DIR" && exit 1
 	python3 -m coverage run -a --branch build_linux.py $RUNTIME_FLAG -a "${ARCHS[0]}" -c "${COMPILERS[0]}" -s "$SRC_DIR" -o "$OUT_DIR" -- O=invalid && exit 1
@@ -83,20 +83,20 @@ run_tests() {
 	python3 -m coverage run -a --branch build_linux.py $RUNTIME_FLAG -a "${ARCHS[0]}" -c "${COMPILERS[0]}" -s /path/INVALID -o "$OUT_DIR" -- defconfig && exit 1
 	python3 -m coverage run -a --branch build_linux.py $RUNTIME_FLAG -a "${ARCHS[0]}" -c "${COMPILERS[0]}" -s "$SRC_DIR" -o "$OUT_DIR" -k /path/IVALID.conf && exit 1
 
-	$DELIMITER
+	echo -e $DELIMITER
 	echo "Testing quiet building..."
 	python3 -m coverage run -a --branch build_linux.py $RUNTIME_FLAG -a "${ARCHS[0]}" -c "${COMPILERS[0]}" -s "$SRC_DIR" -o "$OUT_DIR" -q -- defconfig
 
-	$DELIMITER
+	echo -e $DELIMITER
 	echo "Testing single-cpu building..."
 	python3 -m coverage run -a --branch build_linux.py $RUNTIME_FLAG -a "${ARCHS[0]}" -c "${COMPILERS[0]}" -s "$SRC_DIR" -o "$OUT_DIR" -t -- defconfig
 
-	$DELIMITER
+	echo -e $DELIMITER
 	echo "Testing building with the same directory..."
 	python3 -m coverage run -a --branch build_linux.py $RUNTIME_FLAG -a "${ARCHS[0]}" -c "${COMPILERS[0]}" -s "$SRC_DIR" -- defconfig
 	python3 -m coverage run -a --branch build_linux.py $RUNTIME_FLAG -a "${ARCHS[0]}" -c "${COMPILERS[0]}" -s "$SRC_DIR" -o "$SRC_DIR" -- defconfig
 
-	$DELIMITER
+	echo -e $DELIMITER
 	echo "Testing bulding with external config..."
 	python3 -m coverage run -a --branch build_linux.py $RUNTIME_FLAG -a "${ARCHS[0]}" -c "${COMPILERS[0]}" -s "$SRC_DIR" -o "$SRC_DIR" -- mrproper
 	python3 -m coverage run -a --branch build_linux.py $RUNTIME_FLAG -a "${ARCHS[0]}" -c "${COMPILERS[0]}" -s "$SRC_DIR" -o "$OUT_DIR" -- defconfig
@@ -111,7 +111,7 @@ run_tests() {
 	python3 -m coverage run -a --branch build_linux.py \
 		$RUNTIME_FLAG -a "${ARCHS[0]}" -c "${COMPILERS[0]}" -s "$SRC_DIR" -o "$OUT_DIR" -k "./config" -- defconfig && exit 1
 
-	$DELIMITER
+	echo -e $DELIMITER
 	echo "Testing interruption handling..."
 	python3 -m coverage run -a --branch build_linux.py $RUNTIME_FLAG -a "${ARCHS[0]}" -c "${COMPILERS[0]}" -s "$SRC_DIR" -o "$OUT_DIR" -- mrproper
 	python3 -m coverage run -a --branch build_linux.py $RUNTIME_FLAG -a "${ARCHS[0]}" -c "${COMPILERS[0]}" -s "$SRC_DIR" -o "$OUT_DIR" -- defconfig
@@ -142,7 +142,7 @@ EOF
 		rm "./config"
 	fi
 
-	$DELIMITER
+	echo -e $DELIMITER
 	echo "Testing kernel building..."
 	for arch in "${ARCHS[@]}"; do
 		for compiler in "${COMPILERS[@]}"; do

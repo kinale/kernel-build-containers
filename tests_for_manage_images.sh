@@ -2,7 +2,7 @@
 
 set -eu
 
-DELIMITER="echo -e \n##############################################"
+DELIMITER="\n##############################################"
 RUNTIME_FLAG=""
 RUNTIME=""
 SUDO_CMD=""
@@ -20,54 +20,54 @@ check_if_sudo_needed() {
 }
 
 clear_state() {
-	$DELIMITER
+	echo -e $DELIMITER
 	echo "Clearing the state before the test..."
 	python3 manage_images.py -r $RUNTIME_FLAG
 }
 
 run_basic_tests() {
-	$DELIMITER
+	echo -e $DELIMITER
 	echo "Testing help message printing..."
 	python3 -m coverage run -a --branch manage_images.py -h
 
-	$DELIMITER
+	echo -e $DELIMITER
 	echo "Testing image building..."
 	python3 -m coverage run -a --branch manage_images.py -b gcc-8 $RUNTIME_FLAG
 	python3 -m coverage run -a --branch manage_images.py -b clang-11 $RUNTIME_FLAG
 
-	$DELIMITER
+	echo -e $DELIMITER
 	echo "Testing quiet image building..."
 	python3 -m coverage run -a --branch manage_images.py -b gcc-12 -q $RUNTIME_FLAG
 	python3 -m coverage run -a --branch manage_images.py -b clang-15 -q $RUNTIME_FLAG
 
-	$DELIMITER
+	echo -e $DELIMITER
 	echo "Testing image listing..."
 	python3 -m coverage run -a --branch manage_images.py -l $RUNTIME_FLAG
 
-	$DELIMITER
+	echo -e $DELIMITER
 	echo "Testing image removal..."
 	python3 -m coverage run -a --branch manage_images.py -r gcc-12 $RUNTIME_FLAG
 	python3 -m coverage run -a --branch manage_images.py -r clang-11 $RUNTIME_FLAG
 	python3 -m coverage run -a --branch manage_images.py -r $RUNTIME_FLAG
 
-	$DELIMITER
+	echo -e $DELIMITER
 	echo "Testing building and removing all images..."
 	python3 -m coverage run -a --branch manage_images.py -b $RUNTIME_FLAG
 	python3 -m coverage run -a --branch manage_images.py -r $RUNTIME_FLAG
 	python3 -m coverage run -a --branch manage_images.py -b all $RUNTIME_FLAG
 	python3 -m coverage run -a --branch manage_images.py -r all $RUNTIME_FLAG
 
-	$DELIMITER
+	echo -e $DELIMITER
 	echo "Testing building an existing image..."
 	python3 -m coverage run -a --branch manage_images.py -b gcc-6 $RUNTIME_FLAG
 	python3 -m coverage run -a --branch manage_images.py -b clang-7 $RUNTIME_FLAG
 	python3 -m coverage run -a --branch manage_images.py -r $RUNTIME_FLAG
 
-	$DELIMITER
+	echo -e $DELIMITER
 	echo "Testing removing a non-existing image..."
 	python3 -m coverage run -a --branch manage_images.py -r gcc-13 $RUNTIME_FLAG
 
-	$DELIMITER
+	echo -e $DELIMITER
 	echo "Testing image removal when containers are running..."
 	python3 -m coverage run -a --branch manage_images.py -b gcc-12 $RUNTIME_FLAG
 	$SUDO_CMD $RUNTIME run -d --rm --name test-running-1 kernel-build-container:gcc-12 tail -f /dev/null
@@ -79,20 +79,20 @@ run_basic_tests() {
 }
 
 run_error_handling_tests() {
-	$DELIMITER
+	echo -e $DELIMITER
 	echo "Testing the error handling..."
 
-	$DELIMITER
+	echo -e $DELIMITER
 	echo "Testing without any options..."
 	python3 -m coverage run -a --branch manage_images.py && exit 1
 
-	$DELIMITER
+	echo -e $DELIMITER
 	echo "Testing invalid arguments..."
 	python3 -m coverage run -a --branch manage_images.py -b strange-compiler $RUNTIME_FLAG && exit 1
 	python3 -m coverage run -a --branch manage_images.py -r strange-compiler $RUNTIME_FLAG && exit 1
 	python3 -m coverage run -a --branch manage_images.py -strange-option $RUNTIME_FLAG && exit 1
 
-	$DELIMITER
+	echo -e $DELIMITER
 	echo "Testing some invalid combinations..."
 	python3 -m coverage run -a --branch manage_images.py -l -d -p && exit 1
 	python3 -m coverage run -a --branch manage_images.py -q $RUNTIME_FLAG && exit 1
@@ -117,7 +117,7 @@ run_error_handling_tests() {
 	python3 -m coverage run -a --branch manage_images.py -b gcc-10 -l -r gcc-12 $RUNTIME_FLAG && exit 1
 	python3 -m coverage run -a --branch manage_images.py -b gcc-10 -l -r gcc-12 -q $RUNTIME_FLAG && exit 1
 
-	$DELIMITER
+	echo -e $DELIMITER
 	echo "Testing containers with missing GCC tags..."
 	python3 -m coverage run -a --branch manage_images.py -b gcc-12 $RUNTIME_FLAG
 	$SUDO_CMD $RUNTIME rmi -f kernel-build-container:gcc-12
@@ -125,11 +125,11 @@ run_error_handling_tests() {
 	$SUDO_CMD $RUNTIME rmi -f kernel-build-container:clang-13
 	python3 -m coverage run -a --branch manage_images.py -l $RUNTIME_FLAG
 
-	$DELIMITER
+	echo -e $DELIMITER
 	echo "Emulating that the container runtime is not installed..."
 	PATH="" /usr/bin/python3 -m coverage run -a --branch manage_images.py -l $RUNTIME_FLAG && exit 1
 
-	$DELIMITER
+	echo -e $DELIMITER
 	echo "Emulating an unknown error from the container runtime..."
 	# Use /usr/bin/ls as a fake container runtime to make the `$RUNTIME ps` command
 	# in manage_images.py return an error "cannot access 'ps': No such file or directory" :)
@@ -143,7 +143,7 @@ run_error_handling_tests() {
 }
 
 test_with_stopped_docker_service() {
-	$DELIMITER
+	echo -e $DELIMITER
 	echo "Test the tool with disabled Docker service"
 	$SUDO_CMD systemctl --no-pager status --lines=0 docker.service
 	$SUDO_CMD systemctl --no-pager status --lines=0 docker.socket
@@ -185,7 +185,7 @@ RUNTIME="podman"
 RUNTIME_FLAG="-p"
 run_tests
 
-$DELIMITER
+echo -e $DELIMITER
 echo "All tests completed. Creating the coverage report..."
 python3 -m coverage report
 python3 -m coverage html
