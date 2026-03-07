@@ -3,16 +3,15 @@ set -eu
 
 DELIMITER="\n##############################################"
 
-ARCHS=("x86_64" "i386" "arm64" "arm" "riscv" "powerpc" "powerpc64" "powerpc64le")
-COMPILERS=("gcc-13" "clang-15")
-RUNTIME_FLAG=""
-
 SRC_DIR="$PWD/linux_src"
 OUT_DIR="$PWD/build_out"
 SRC_TARBALL="$PWD/linux_src.tar.xz"
 KERNEL="https://cdn.kernel.org/pub/linux/kernel/v6.x/linux-6.12.65.tar.xz"
 EXPECTED_CHECKSUM="54e852667af35c0ed06cfc81311e65fa7f5f798a3bfcf78a559d3b4785a139c1"
 
+RUNTIME_FLAG=""
+COMPILERS=("gcc-13" "clang-15")
+ARCHS=("x86_64" "i386" "arm64" "arm" "riscv" "powerpc" "powerpc64" "powerpc64le")
 declare -A EXPECTED_IMAGES=(
 	[x86_64]="arch/x86/boot/bzImage"
 	[i386]="arch/x86/boot/bzImage"
@@ -68,19 +67,27 @@ run_tests() {
 
 	echo -e $DELIMITER
 	echo "Testing kernel building..."
-	for arch in "${ARCHS[@]}"; do
-		for compiler in "${COMPILERS[@]}"; do
-			cfg="${OUT_DIR}/${arch}__${compiler}/.config"
-			[[ -e "$cfg" ]] && fail "Unexpected .config: $cfg"
+	for ARCH in "${ARCHS[@]}"; do
+		for COMPILER in "${COMPILERS[@]}"; do
+			CONFIG="$OUT_DIR/${ARCH}__$COMPILER/.config"
+			test -f "$CONFIG" && fail "Unexpected kernel config detected: $CONFIG"
 
-			python3 -m coverage run -a --branch build_linux.py $RUNTIME_FLAG -a "$arch" -c "$compiler" -s "$SRC_DIR" -o "$OUT_DIR" -- defconfig
-			[[ -f "$cfg" ]] || fail "Missing .config after defconfig: $cfg"
+			python3 -m coverage run -a --branch build_linux.py $RUNTIME_FLAG -a "$ARCH" -c "$COMPILER" -s "$SRC_DIR" -o "$OUT_DIR" -- defconfig
+			if [ -f "$CONFIG" ]; then
+				echo "[+] Kernel config is generated: $CONFIG"
+			else
+				fail "Missing $CONFIG after building defconfig"
+			fi
 
-			python3 -m coverage run -a --branch build_linux.py $RUNTIME_FLAG -a "$arch" -c "$compiler" -s "$SRC_DIR" -o "$OUT_DIR"
-			expected="${OUT_DIR}/${arch}__${compiler}/${EXPECTED_IMAGES[$arch]}"
-			[[ -f "$expected" ]] || fail "Missing expected image after full build: $expected"
+			python3 -m coverage run -a --branch build_linux.py $RUNTIME_FLAG -a "$ARCH" -c "$COMPILER" -s "$SRC_DIR" -o "$OUT_DIR"
+			IMAGE="$OUT_DIR/${ARCH}__$COMPILER/${EXPECTED_IMAGES[$ARCH]}"
+			if [ -f "$IMAGE" ]; then
+				echo "[+] Kernel image is generated: $IMAGE"
+			else
+				fail "Missing $IMAGE after building the kernel"
+			fi
 
-			python3 -m coverage run -a --branch build_linux.py $RUNTIME_FLAG -a "$arch" -c "$compiler" -s "$SRC_DIR" -o "$OUT_DIR" -- mrproper
+			python3 -m coverage run -a --branch build_linux.py $RUNTIME_FLAG -a "$ARCH" -c "$COMPILER" -s "$SRC_DIR" -o "$OUT_DIR" -- mrproper
 		done
 	done
 
