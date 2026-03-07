@@ -24,9 +24,12 @@ declare -A EXPECTED_IMAGES=(
 	[powerpc64le]="arch/powerpc/boot/zImage"
 )
 
-fail() { echo "[-] $*"; exit 1; }
+fail() {
+	echo "[-] $*"
+	exit 1
+}
 
-prepare_deps(){
+prepare_deps() {
 	$DELIMITER
 	echo "Preparing dependencies..."
 
@@ -51,12 +54,11 @@ prepare_deps(){
 		fail "Working directory is not clean! Remove $SRC_DIR $OUT_DIR"
 	fi
 
-
 	mkdir -p $SRC_DIR $OUT_DIR
 	tar -xf $SRC_TARBALL -C $SRC_DIR --strip-components=1
 }
 
-prepare_compilers(){
+prepare_compilers() {
 	$DELIMITER
 	echo "Preparing compilers..."
 	for compiler in "${COMPILERS[@]}"; do
@@ -64,7 +66,7 @@ prepare_compilers(){
 	done
 }
 
-run_tests(){
+run_tests() {
 	prepare_compilers
 
 	$DELIMITER
@@ -103,7 +105,7 @@ run_tests(){
 		$RUNTIME_FLAG -a "${ARCHS[0]}" -c "${COMPILERS[0]}" -s "$SRC_DIR" -o "$OUT_DIR" -k "./config" -- defconfig
 	python3 -m coverage run -a --branch build_linux.py \
 		$RUNTIME_FLAG -a "${ARCHS[0]}" -c "${COMPILERS[0]}" -s "$SRC_DIR" -o "$OUT_DIR" -k "./config" -- defconfig
-	echo "# CONFIG_EXAMPLE_FOOBAR is not set" >> "./config"
+	echo "# CONFIG_EXAMPLE_FOOBAR is not set" >>"./config"
 	python3 -m coverage run -a --branch build_linux.py \
 		$RUNTIME_FLAG -a "${ARCHS[0]}" -c "${COMPILERS[0]}" -s "$SRC_DIR" -o "$OUT_DIR" -k "./config" -- defconfig && exit 1
 
@@ -111,7 +113,7 @@ run_tests(){
 	echo "Testing interruption handling..."
 	python3 -m coverage run -a --branch build_linux.py $RUNTIME_FLAG -a "${ARCHS[0]}" -c "${COMPILERS[0]}" -s "$SRC_DIR" -o "$OUT_DIR" -- mrproper
 	python3 -m coverage run -a --branch build_linux.py $RUNTIME_FLAG -a "${ARCHS[0]}" -c "${COMPILERS[0]}" -s "$SRC_DIR" -o "$OUT_DIR" -- defconfig
-	expect << EOF
+	expect <<EOF
 spawn python3 -m coverage run -a --branch build_linux.py -t $RUNTIME_FLAG -a "${ARCHS[0]}" -c "${COMPILERS[0]}" -s "$SRC_DIR" -o "$OUT_DIR"
 set timeout 2
 expect {
@@ -121,7 +123,7 @@ expect {
 	}
 }
 EOF
-	expect << EOF
+	expect <<EOF
 spawn python3 -m coverage run -a --branch build_linux.py $RUNTIME_FLAG -a "${ARCHS[0]}" -c "${COMPILERS[0]}" -s "$SRC_DIR" -o "$OUT_DIR" -- menuconfig
 set timeout 5
 expect {
@@ -157,7 +159,7 @@ EOF
 	done
 }
 
-cleanup(){
+cleanup() {
 	if [ -e "$SRC_TARBALL" ] && [ -e "$SRC_DIR" ] && [ -e "$OUT_DIR" ]; then
 		echo "It is safe to remove these directories: $SRC_TARBALL $SRC_DIR $OUT_DIR"
 	fi
