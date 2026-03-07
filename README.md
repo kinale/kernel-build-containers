@@ -556,8 +556,8 @@ In that case simply stop this container and run `manage_images.py -r` again.
 If you change `manage_images.py` or `build_linux.py`, please run the tests:
 
 ```console
-$ bash test_image_mgmt.sh
-$ bash test_build_linux.sh
+$ bash tests_for_manage_images.sh
+$ bash tests_for_build_linux.sh
 ```
 
 The code coverage will be stored in `htmlcov/index.html`.
