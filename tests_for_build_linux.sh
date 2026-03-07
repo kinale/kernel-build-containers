@@ -172,19 +172,35 @@ expect {
 	}
 }
 EOF
+
+	# Ok, remove all build artifacts
+	rm -rf "$OUT_DIR"/*
+}
+
+run_menuconfig_test() {
+	python3 -m coverage run -a --branch build_linux.py -p -a "${ARCHS[0]}" -c "${COMPILERS[0]}" -s "$SRC_DIR" -o "$OUT_DIR" -- mrproper
+	python3 -m coverage run -a --branch build_linux.py -p -a "${ARCHS[0]}" -c "${COMPILERS[0]}" -s "$SRC_DIR" -o "$OUT_DIR" -- defconfig
+	# The following expect script can test menuconfig only with rootless Podman (since Docker requires sudo).
+	# Double Esc (0x1b) allows to exit from the menuconfig.
 	expect <<EOF
-spawn python3 -m coverage run -a --branch build_linux.py $RUNTIME_FLAG -a "${ARCHS[0]}" -c "${COMPILERS[0]}" -s "$SRC_DIR" -o "$OUT_DIR" -- menuconfig
+spawn python3 -m coverage run -a --branch build_linux.py -p -a "${ARCHS[0]}" -c "${COMPILERS[0]}" -s "$SRC_DIR" -o "$OUT_DIR" -- menuconfig
 set timeout 5
 expect {
 	timeout {
-		send "\x03"
-		send Y
-		expect eof
+		send "\x1b"
+		send "\x1b"
+	}
+}
+set timeout 10
+expect {
+	eof {
+		exit 0
+	}
+	timeout {
+		exit 1
 	}
 }
 EOF
-	python3 -m coverage run -a --branch build_linux.py $RUNTIME_FLAG -a "${ARCHS[0]}" -c "${COMPILERS[0]}" -s "$SRC_DIR" -o "$SRC_DIR" -- mrproper
-	python3 -m coverage run -a --branch build_linux.py $RUNTIME_FLAG -a "${ARCHS[0]}" -c "${COMPILERS[0]}" -s "$SRC_DIR" -o "$OUT_DIR" -- mrproper
 }
 
 cleanup() {
@@ -208,6 +224,8 @@ run_tests
 # Test Podman
 RUNTIME_FLAG="-p"
 run_tests
+
+run_menuconfig_test
 
 echo "All tests completed. Creating the coverage report..."
 python3 -m coverage report
