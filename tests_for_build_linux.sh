@@ -112,9 +112,28 @@ run_tests() {
 	python3 -m coverage run -a --branch build_linux.py $RUNTIME_FLAG -a "${ARCHS[0]}" -c "${COMPILERS[0]}" -s "$SRC_DIR" -o "$OUT_DIR" -t -- defconfig
 
 	echo -e $DELIMITER
-	echo "Testing building with the same directory..."
+	echo "Testing kernel building at the directory with the kernel sources..."
+	CONFIG="$SRC_DIR/.config"
+	test -f "$CONFIG" && fail "Unexpected kernel config detected: $CONFIG"
 	python3 -m coverage run -a --branch build_linux.py $RUNTIME_FLAG -a "${ARCHS[0]}" -c "${COMPILERS[0]}" -s "$SRC_DIR" -- defconfig
+	if [ -f "$CONFIG" ]; then
+		echo "[+] Kernel config is generated: $CONFIG"
+	else
+		fail "Missing $CONFIG after building defconfig"
+	fi
+	python3 -m coverage run -a --branch build_linux.py $RUNTIME_FLAG -a "${ARCHS[0]}" -c "${COMPILERS[0]}" -s "$SRC_DIR" -- mrproper
+	test -f "$CONFIG" && fail "Unexpected kernel config detected: $CONFIG"
 	python3 -m coverage run -a --branch build_linux.py $RUNTIME_FLAG -a "${ARCHS[0]}" -c "${COMPILERS[0]}" -s "$SRC_DIR" -o "$SRC_DIR" -- defconfig
+	if [ -f "$CONFIG" ]; then
+		echo "[+] Kernel config is generated: $CONFIG"
+	else
+		fail "Missing $CONFIG after building defconfig"
+	fi
+	# Now building at some other OUT_DIR should fail (SRC_DIR needs cleaning)
+	python3 -m coverage run -a --branch build_linux.py $RUNTIME_FLAG -a "${ARCHS[0]}" -c "${COMPILERS[0]}" -s "$SRC_DIR" -o "$OUT_DIR" -- defconfig && exit 1
+	# Clean SRC_DIR and try again
+	python3 -m coverage run -a --branch build_linux.py $RUNTIME_FLAG -a "${ARCHS[0]}" -c "${COMPILERS[0]}" -s "$SRC_DIR" -- mrproper
+	python3 -m coverage run -a --branch build_linux.py $RUNTIME_FLAG -a "${ARCHS[0]}" -c "${COMPILERS[0]}" -s "$SRC_DIR" -o "$OUT_DIR" -- defconfig
 
 	echo -e $DELIMITER
 	echo "Testing building with external config..."
