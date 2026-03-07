@@ -136,19 +136,18 @@ run_tests() {
 	python3 -m coverage run -a --branch build_linux.py $RUNTIME_FLAG -a "${ARCHS[0]}" -c "${COMPILERS[0]}" -s "$SRC_DIR" -o "$OUT_DIR" -- defconfig
 
 	echo -e $DELIMITER
-	echo "Testing building with external config..."
-	python3 -m coverage run -a --branch build_linux.py $RUNTIME_FLAG -a "${ARCHS[0]}" -c "${COMPILERS[0]}" -s "$SRC_DIR" -o "$SRC_DIR" -- mrproper
+	echo "Testing kernel building with the external kernel config..."
 	python3 -m coverage run -a --branch build_linux.py $RUNTIME_FLAG -a "${ARCHS[0]}" -c "${COMPILERS[0]}" -s "$SRC_DIR" -o "$OUT_DIR" -- defconfig
-	cp "${OUT_DIR}/${ARCHS[0]}__${COMPILERS[0]}/.config" "./config"
-	python3 -m coverage run -a --branch build_linux.py \
-		$RUNTIME_FLAG -a "${ARCHS[0]}" -c "${COMPILERS[0]}" -s "$SRC_DIR" -k "./config" && exit 1
-	python3 -m coverage run -a --branch build_linux.py \
-		$RUNTIME_FLAG -a "${ARCHS[0]}" -c "${COMPILERS[0]}" -s "$SRC_DIR" -o "$OUT_DIR" -k "./config" -- defconfig
-	python3 -m coverage run -a --branch build_linux.py \
-		$RUNTIME_FLAG -a "${ARCHS[0]}" -c "${COMPILERS[0]}" -s "$SRC_DIR" -o "$OUT_DIR" -k "./config" -- defconfig
-	echo "# CONFIG_EXAMPLE_FOOBAR is not set" >>"./config"
-	python3 -m coverage run -a --branch build_linux.py \
-		$RUNTIME_FLAG -a "${ARCHS[0]}" -c "${COMPILERS[0]}" -s "$SRC_DIR" -o "$OUT_DIR" -k "./config" -- defconfig && exit 1
+	cp "$OUT_DIR/${ARCHS[0]}__${COMPILERS[0]}/.config" "$PWD/testcfg"
+	# Test that build_linux.py fails if "-k" is used without "-o"
+	python3 -m coverage run -a --branch build_linux.py $RUNTIME_FLAG -a "${ARCHS[0]}" -c "${COMPILERS[0]}" -s "$SRC_DIR" -k "$PWD/testcfg" && exit 1
+	python3 -m coverage run -a --branch build_linux.py $RUNTIME_FLAG -a "${ARCHS[0]}" -c "${COMPILERS[0]}" -s "$SRC_DIR" -o "$OUT_DIR" -k "$PWD/testcfg"
+	# Test that build_linux.py proceeds if the kernel config is similar to one in OUT_DIR
+	python3 -m coverage run -a --branch build_linux.py $RUNTIME_FLAG -a "${ARCHS[0]}" -c "${COMPILERS[0]}" -s "$SRC_DIR" -o "$OUT_DIR" -k "$PWD/testcfg"
+	# Test that build_linux.py fails if the kernel config differs from one in OUT_DIR
+	echo "# CONFIG_EXAMPLE_FOOBAR is not set" >>"$PWD/testcfg"
+	python3 -m coverage run -a --branch build_linux.py $RUNTIME_FLAG -a "${ARCHS[0]}" -c "${COMPILERS[0]}" -s "$SRC_DIR" -o "$OUT_DIR" -k "$PWD/testcfg" && exit 1
+	rm "$PWD/testcfg"
 
 	echo -e $DELIMITER
 	echo "Testing interruption handling..."
@@ -177,9 +176,6 @@ expect {
 EOF
 	python3 -m coverage run -a --branch build_linux.py $RUNTIME_FLAG -a "${ARCHS[0]}" -c "${COMPILERS[0]}" -s "$SRC_DIR" -o "$SRC_DIR" -- mrproper
 	python3 -m coverage run -a --branch build_linux.py $RUNTIME_FLAG -a "${ARCHS[0]}" -c "${COMPILERS[0]}" -s "$SRC_DIR" -o "$OUT_DIR" -- mrproper
-	if [ -e "./config" ]; then
-		rm "./config"
-	fi
 }
 
 cleanup() {
