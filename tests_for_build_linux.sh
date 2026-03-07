@@ -151,15 +151,24 @@ run_tests() {
 
 	echo -e $DELIMITER
 	echo "Testing interruption handling..."
-	python3 -m coverage run -a --branch build_linux.py $RUNTIME_FLAG -a "${ARCHS[0]}" -c "${COMPILERS[0]}" -s "$SRC_DIR" -o "$OUT_DIR" -- mrproper
 	python3 -m coverage run -a --branch build_linux.py $RUNTIME_FLAG -a "${ARCHS[0]}" -c "${COMPILERS[0]}" -s "$SRC_DIR" -o "$OUT_DIR" -- defconfig
 	expect <<EOF
 spawn python3 -m coverage run -a --branch build_linux.py -t $RUNTIME_FLAG -a "${ARCHS[0]}" -c "${COMPILERS[0]}" -s "$SRC_DIR" -o "$OUT_DIR"
-set timeout 2
+set timeout 5
 expect {
 	timeout {
+		puts "--- Sending Ctrl+C ---"
 		send "\x03"
-		expect eof
+	}
+}
+set timeout 10
+expect {
+	eof {
+		exit 0
+	}
+	timeout {
+		puts "ERROR: build_linux.py didn't stop"
+		exit 1
 	}
 }
 EOF
