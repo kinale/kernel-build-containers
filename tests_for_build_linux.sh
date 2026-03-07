@@ -72,6 +72,24 @@ run_tests() {
 	prepare_compilers
 
 	echo -e $DELIMITER
+	echo "Testing kernel building..."
+	for arch in "${ARCHS[@]}"; do
+		for compiler in "${COMPILERS[@]}"; do
+			cfg="${OUT_DIR}/${arch}__${compiler}/.config"
+			[[ -e "$cfg" ]] && fail "Unexpected .config: $cfg"
+
+			python3 -m coverage run -a --branch build_linux.py $RUNTIME_FLAG -a "$arch" -c "$compiler" -s "$SRC_DIR" -o "$OUT_DIR" -- defconfig
+			[[ -f "$cfg" ]] || fail "Missing .config after defconfig: $cfg"
+
+			python3 -m coverage run -a --branch build_linux.py $RUNTIME_FLAG -a "$arch" -c "$compiler" -s "$SRC_DIR" -o "$OUT_DIR"
+			expected="${OUT_DIR}/${arch}__${compiler}/${EXPECTED_IMAGES[$arch]}"
+			[[ -f "$expected" ]] || fail "Missing expected image after full build: $expected"
+
+			python3 -m coverage run -a --branch build_linux.py $RUNTIME_FLAG -a "$arch" -c "$compiler" -s "$SRC_DIR" -o "$OUT_DIR" -- mrproper
+		done
+	done
+
+	echo -e $DELIMITER
 	echo "Testing some invalid arguments..."
 	python3 -m coverage run -a --branch build_linux.py -p -d -a "${ARCHS[0]}" -c "${COMPILERS[0]}" -s "$SRC_DIR" -o "$OUT_DIR" && exit 1
 	python3 -m coverage run -a --branch build_linux.py $RUNTIME_FLAG -a "${ARCHS[0]}" -c "${COMPILERS[0]}" -s "$SRC_DIR" -o "$OUT_DIR" -- O=invalid && exit 1
@@ -141,24 +159,6 @@ EOF
 	if [ -e "./config" ]; then
 		rm "./config"
 	fi
-
-	echo -e $DELIMITER
-	echo "Testing kernel building..."
-	for arch in "${ARCHS[@]}"; do
-		for compiler in "${COMPILERS[@]}"; do
-			cfg="${OUT_DIR}/${arch}__${compiler}/.config"
-			[[ -e "$cfg" ]] && fail "Unexpected .config: $cfg"
-
-			python3 -m coverage run -a --branch build_linux.py $RUNTIME_FLAG -a "$arch" -c "$compiler" -s "$SRC_DIR" -o "$OUT_DIR" -- defconfig
-			[[ -f "$cfg" ]] || fail "Missing .config after defconfig: $cfg"
-
-			python3 -m coverage run -a --branch build_linux.py $RUNTIME_FLAG -a "$arch" -c "$compiler" -s "$SRC_DIR" -o "$OUT_DIR"
-			expected="${OUT_DIR}/${arch}__${compiler}/${EXPECTED_IMAGES[$arch]}"
-			[[ -f "$expected" ]] || fail "Missing expected image after full build: $expected"
-
-			python3 -m coverage run -a --branch build_linux.py $RUNTIME_FLAG -a "$arch" -c "$compiler" -s "$SRC_DIR" -o "$OUT_DIR" -- mrproper
-		done
-	done
 }
 
 cleanup() {
