@@ -32,8 +32,8 @@ prepare_tests() {
 	echo -e "$DELIMITER"
 	echo "Preparing to the tests..."
 
-	for cmd in wget tar expect; do
-		if [ -z "$(command -v "$cmd")" ]; then
+	for CMD in wget tar expect; do
+		if ! command -v "$CMD" >/dev/null; then
 			fail "Make sure these utilities are installed: wget tar expect"
 		fi
 	done
