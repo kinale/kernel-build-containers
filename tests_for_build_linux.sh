@@ -29,7 +29,7 @@ fail() {
 }
 
 prepare_tests() {
-	echo -e $DELIMITER
+	echo -e "$DELIMITER"
 	echo "Preparing to the tests..."
 
 	for cmd in wget tar expect; do
@@ -65,7 +65,7 @@ prepare_tests() {
 run_tests() {
 	# Use $RUNTIME_FLAG without quotes since it may be empty (default value)
 
-	echo -e $DELIMITER
+	echo -e "$DELIMITER"
 	echo "Testing kernel building..."
 	for ARCH in "${ARCHS[@]}"; do
 		for COMPILER in "${COMPILERS[@]}"; do
@@ -91,15 +91,15 @@ run_tests() {
 		done
 	done
 
-	echo -e $DELIMITER
+	echo -e "$DELIMITER"
 	echo "Testing quiet kernel building..."
 	python3 -m coverage run -a --branch build_linux.py $RUNTIME_FLAG -a "${ARCHS[0]}" -c "${COMPILERS[0]}" -s "$SRC_DIR" -o "$OUT_DIR" -q -- defconfig
 
-	echo -e $DELIMITER
+	echo -e "$DELIMITER"
 	echo "Testing single-cpu kernel building..."
 	python3 -m coverage run -a --branch build_linux.py $RUNTIME_FLAG -a "${ARCHS[0]}" -c "${COMPILERS[0]}" -s "$SRC_DIR" -o "$OUT_DIR" -t -- defconfig
 
-	echo -e $DELIMITER
+	echo -e "$DELIMITER"
 	echo "Testing kernel building at the directory with the kernel sources..."
 	CONFIG="$SRC_DIR/.config"
 	test -f "$CONFIG" && fail "Unexpected kernel config detected: $CONFIG"
@@ -123,7 +123,7 @@ run_tests() {
 	python3 -m coverage run -a --branch build_linux.py $RUNTIME_FLAG -a "${ARCHS[0]}" -c "${COMPILERS[0]}" -s "$SRC_DIR" -- mrproper
 	python3 -m coverage run -a --branch build_linux.py $RUNTIME_FLAG -a "${ARCHS[0]}" -c "${COMPILERS[0]}" -s "$SRC_DIR" -o "$OUT_DIR" -- defconfig
 
-	echo -e $DELIMITER
+	echo -e "$DELIMITER"
 	echo "Testing kernel building with the external kernel config..."
 	python3 -m coverage run -a --branch build_linux.py $RUNTIME_FLAG -a "${ARCHS[0]}" -c "${COMPILERS[0]}" -s "$SRC_DIR" -o "$OUT_DIR" -- defconfig
 	cp "$OUT_DIR/${ARCHS[0]}__${COMPILERS[0]}/.config" "$PWD/testcfg"
@@ -137,7 +137,7 @@ run_tests() {
 	python3 -m coverage run -a --branch build_linux.py $RUNTIME_FLAG -a "${ARCHS[0]}" -c "${COMPILERS[0]}" -s "$SRC_DIR" -o "$OUT_DIR" -k "$PWD/testcfg" && exit 1
 	rm "$PWD/testcfg"
 
-	echo -e $DELIMITER
+	echo -e "$DELIMITER"
 	echo "Testing invalid argument combinations (build_linux.py must return an error)..."
 	python3 -m coverage run -a --branch build_linux.py -p -d -a "${ARCHS[0]}" -c "${COMPILERS[0]}" -s "$SRC_DIR" -o "$OUT_DIR" && exit 1
 	python3 -m coverage run -a --branch build_linux.py $RUNTIME_FLAG -a "${ARCHS[0]}" -c "${COMPILERS[0]}" -s "$SRC_DIR" -o "$OUT_DIR" -- O=invalid && exit 1
@@ -149,7 +149,7 @@ run_tests() {
 	python3 -m coverage run -a --branch build_linux.py $RUNTIME_FLAG -a "${ARCHS[0]}" -c "${COMPILERS[0]}" -s /path/INVALID -o "$OUT_DIR" && exit 1
 	python3 -m coverage run -a --branch build_linux.py $RUNTIME_FLAG -a "${ARCHS[0]}" -c "${COMPILERS[0]}" -s "$SRC_DIR" -o /path/INVALID && exit 1
 
-	echo -e $DELIMITER
+	echo -e "$DELIMITER"
 	echo "Testing interruption handling..."
 	python3 -m coverage run -a --branch build_linux.py $RUNTIME_FLAG -a "${ARCHS[0]}" -c "${COMPILERS[0]}" -s "$SRC_DIR" -o "$OUT_DIR" -- defconfig
 	expect <<EOF
