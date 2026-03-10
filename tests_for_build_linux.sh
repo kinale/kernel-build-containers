@@ -203,11 +203,12 @@ expect {
 EOF
 }
 
-cleanup() {
-	if [ -e "$SRC_TARBALL" ] && [ -e "$SRC_DIR" ] && [ -e "$OUT_DIR" ]; then
-		echo "It is safe to remove these directories: $SRC_TARBALL $SRC_DIR $OUT_DIR"
-	fi
+cleanup_after_tests() {
+	rm -rf "$OUT_DIR"
+	rm -rf "$SRC_DIR"
+	rm "$SRC_TARBALL"
 }
+
 
 echo "Let's test build_linux.py..."
 prepare_tests
@@ -230,5 +231,6 @@ run_menuconfig_test
 echo "All tests completed. Creating the coverage report..."
 python3 -m coverage report
 python3 -m coverage html
-cleanup
+
+cleanup_after_tests
 echo "Well done!"
