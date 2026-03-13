@@ -9,6 +9,7 @@ import subprocess
 import shutil
 import filecmp
 import pwd
+import signal
 
 
 supported_archs = ['x86_64', 'i386', 'arm64', 'arm', 'riscv', 'powerpc', 'powerpc64', 'powerpc64le']
@@ -48,7 +49,7 @@ def get_cross_compile_args(arch):
 
 
 def finish_building_kernel(runtime, out_dir, interrupt):
-    print('Finish building the kernel')
+    print('Finishing the container')
     finish_container_cmd = ['bash', os.path.dirname(os.path.abspath(__file__)) + '/finish_container.sh', runtime]
     if interrupt:
         print('Kill the container and remove the container id file:')
@@ -148,17 +149,17 @@ def build_kernel(runtime, arch, kconfig, src, out, compiler, make_args):
                     print(f'    {line}', end='\r')
                     build_log_fd.write(line)
             return_code = process.wait()
-            print(f'The container returned {return_code}')
+            print(f'The container\'s return code {return_code}')
         except KeyboardInterrupt:
-            print('[!] WARNING: Got keyboard interrupt, stopping build process...')
+            return_code = 128 + signal.SIGINT
+            print(f'[!] WARNING: Got keyboard interrupt, stopping (return code {return_code})')
             interrupt = True
     finish_building_kernel(runtime, out_subdir, interrupt)
     if noninteractive:
         print(f'See the build log: {build_log}')
         build_log_fd.close()
-    if interrupt:
-        sys.exit('[!] WARNING: Exit by interrupt')
 
+    return return_code
 
 def main():
     parser = argparse.ArgumentParser(description='Build Linux kernel using kernel-build-containers')
@@ -198,7 +199,7 @@ def main():
         print(f'[!] INFO: Working with Podman images belonging to "{pwd.getpwuid(os.getuid()).pw_name}" (UID {os.getuid()})')
         runtime = 'podman'
     else:
-        print(f'Docker container engine is chosen (default)')
+        print('Docker container engine is chosen (default)')
         runtime = 'docker'
 
     print(f'Going to build the Linux kernel for {args.arch}')
@@ -249,9 +250,10 @@ def main():
     else:
         print('Going to run \'make\' in single-threaded mode')
 
-    build_kernel(runtime, args.arch, args.kconfig, args.src, args.out, args.compiler, make_args)
+    return_code = build_kernel(runtime, args.arch, args.kconfig, args.src, args.out, args.compiler, make_args)
 
     print('[+] Done, see the results')
+    sys.exit(return_code)
 
 
 if __name__ == '__main__':
