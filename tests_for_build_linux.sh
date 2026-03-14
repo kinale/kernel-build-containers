@@ -87,7 +87,8 @@ run_tests() {
 				fail "Missing $IMAGE after building the kernel"
 			fi
 
-			python3 -m coverage run -a --branch build_linux.py $RUNTIME_FLAG -a "$ARCH" -c "$COMPILER" -s "$SRC_DIR" -o "$OUT_DIR" -- mrproper
+			# Provide additional arguments for 'make' without the -- delimiter
+			python3 -m coverage run -a --branch build_linux.py $RUNTIME_FLAG -a "$ARCH" -c "$COMPILER" -s "$SRC_DIR" -o "$OUT_DIR" mrproper
 		done
 	done
 
