@@ -69,7 +69,8 @@ RUN set -ex; \
       update-alternatives --install /usr/bin/llvm-nm llvm-nm /usr/bin/llvm-nm-${CLANG_VERSION} 100; \
       update-alternatives --install /usr/bin/llvm-objdump llvm-objdump /usr/bin/llvm-objdump-${CLANG_VERSION} 100; \
       update-alternatives --install /usr/bin/llvm-readelf llvm-readelf /usr/bin/llvm-readelf-${CLANG_VERSION} 100; \
-    fi
+    fi; \
+    rm -rf /var/lib/apt/lists/*
 
 ARG UNAME
 ARG UID
