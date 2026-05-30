@@ -3,7 +3,11 @@ name: static analysis
 permissions:
   contents: read
 
-on: [push, pull_request]
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
 
 jobs:
   static_analysis:
