@@ -188,9 +188,9 @@ def prepare_make_args(args):
             make_args.pop(0)
         print(f'Have additional arguments for \'make\': {" ".join(make_args)}')
         for arg in make_args:
-            for prefix in forbidden_make_vars:
-                if arg.startswith(prefix):
-                    sys.exit(f'[-] ERROR: Don\'t specify \'{prefix}\', we will take care of that')
+            for var in forbidden_make_vars:
+                if arg.startswith(var):
+                    sys.exit(f'[-] ERROR: Don\'t specify \'{var}\', we will take care of that')
             if arg.startswith('-j'):
                 sys.exit('[-] ERROR: Don\'t specify \'-j\', by default we run \'make\' in parallel on all CPUs')
 
@@ -204,6 +204,7 @@ def prepare_make_args(args):
         make_args = ['-j', str(cpu_count), *make_args]
     else:
         print('Going to run \'make\' in single-threaded mode')
+
     return make_args
 
 
