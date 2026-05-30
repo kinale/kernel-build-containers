@@ -75,20 +75,22 @@ def finish_building_kernel(runtime, out_dir, interrupt):
     print(f'The finish_container.sh script returned {return_code}')
 
 
-def run_build_in_container(start_container_cmd, noninteractive, build_log):
+def run_build_in_container(start_container_cmd, build_log):
     interrupt = False
     build_log_fd = None
+    stdout_destination = None
 
-    if noninteractive:
+    if build_log:
         build_log_fd = open(build_log, 'w', encoding='utf-8')  # noqa: SIM115 # pylint: disable=R1732
+        stdout_destination = subprocess.PIPE
         print(f'[!] Going to write the build log to "{build_log}"')
     else:
         print('Going to run the container in the interactive mode (without build log)')
 
-    with subprocess.Popen(start_container_cmd, stdout=subprocess.PIPE if noninteractive else None,
-                          stderr=subprocess.STDOUT, universal_newlines=True, bufsize=1) as process:
+    with subprocess.Popen(start_container_cmd, stdout=stdout_destination, stderr=subprocess.STDOUT,
+                          universal_newlines=True, bufsize=1) as process:
         try:
-            if build_log_fd:
+            if build_log:
                 for line in process.stdout:
                     print(f'    {line}', end='\r')
                     build_log_fd.write(line)
@@ -100,7 +102,7 @@ def run_build_in_container(start_container_cmd, noninteractive, build_log):
             print(f'[!] WARNING: Got keyboard interrupt, stopping (return code {return_code})')
             interrupt = True
 
-    if build_log_fd:
+    if build_log:
         print(f'See the build log: {build_log}')
         build_log_fd.close()
 
@@ -172,7 +174,7 @@ def build_kernel(runtime, arch, kconfig, src, out, compiler, make_args):
     start_container_cmd.extend(make_args)
 
     print(f'Run the container: {" ".join(start_container_cmd)}')
-    return_code, interrupt = run_build_in_container(start_container_cmd, noninteractive, build_log)
+    return_code, interrupt = run_build_in_container(start_container_cmd, build_log)
 
     finish_building_kernel(runtime, out_subdir, interrupt)
 
