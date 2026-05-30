@@ -206,16 +206,16 @@ def main():
     args = parser.parse_args()
 
     if args.docker:
-        print('[+] Force to use the Docker container engine')
+        print('Force to use the Docker container engine')
         ContainerImage.runtime = 'docker'
     elif args.podman:
         uid = os.getuid()
         username = pwd.getpwuid(uid).pw_name
-        print('[+] Force to use the Podman container engine')
+        print('Force to use the Podman container engine')
         print(f'[!] INFO: Working with Podman images belonging to "{username}" (UID {uid})')
         ContainerImage.runtime = 'podman'
     else:
-        print('[+] Docker container engine is chosen (default)')
+        print('Docker container engine is chosen (default)')
         ContainerImage.runtime = 'docker'
 
     if not any((args.list, args.build, args.remove)):

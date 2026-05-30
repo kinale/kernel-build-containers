@@ -284,7 +284,7 @@ def main():
 
     return_code = build_kernel(runtime, args, make_args)
 
-    print('[+] Done, see the results')
+    print('Done, see the results')
     sys.exit(return_code)
 
 

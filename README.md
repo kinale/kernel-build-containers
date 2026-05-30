@@ -116,7 +116,7 @@ __List container images for the chosen container engine:__
 
 ```console
 $ python3 manage_images.py -p -l
-[+] Force to use the Podman container engine
+Force to use the Podman container engine
 [!] INFO: Working with Podman images belonging to "a13x" (UID 1000)
 
 Current status:
@@ -344,7 +344,7 @@ Only remove the container id file:
     Search "container.id" file in build output directory "/home/a13x/linux-stable/build_out/experiment__arm64__gcc-13"
     NO such file, nothing to do, exit
 The finish_container.sh script returned 2
-[+] Done, see the results
+Done, see the results
 ```
 
 __Build the Linux kernel in the needed container saving the build output into a separate directory:__
@@ -386,7 +386,7 @@ Only remove the container id file:
     OK, container 12566459b1f6784a3b332791d3e7796ab69ea45df9739ab2fbe2a7be0c0b39dd doesn't run
 The finish_container.sh script returned 0
 See the build log: /home/a13x/linux-stable/build_out/experiment__arm64__gcc-13/build_log.txt
-[+] Done, see the results
+Done, see the results
 ```
 
 The tool returns an error if the kconfig file specified with `-k` differs from the `.config` in the build output directory:
@@ -464,7 +464,7 @@ Only remove the container id file:
     OK, container 02851894aa6a6f5c1b1e0c72cbd3917e2e82349f8ffb3281dc36454abb98391a doesn't run
 The finish_container.sh script returned 0
 See the build log: /home/a13x/linux-stable/linux-stable/build_log.txt
-[+] Done, see the results
+Done, see the results
 ```
 
 ## How to remove the created container images
@@ -488,7 +488,7 @@ $ python3 manage_images.py -r
 __Expected output, if the containers are not running:__
 
 ```console
-[+] Docker container engine is chosen (default)
+Docker container engine is chosen (default)
 [!] INFO: We need "sudo" for working with Docker containers
 
 Current status:
