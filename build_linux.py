@@ -83,9 +83,6 @@ def run_build_in_container(start_container_cmd, build_log):
     if build_log:
         build_log_fd = open(build_log, 'w', encoding='utf-8')  # noqa: SIM115 # pylint: disable=R1732
         stdout_destination = subprocess.PIPE
-        print(f'[!] Going to write the build log to "{build_log}"')
-    else:
-        print('Going to run the container in the interactive mode (without build log)')
 
     with subprocess.Popen(start_container_cmd, stdout=stdout_destination, stderr=subprocess.STDOUT,
                           universal_newlines=True, bufsize=1) as process:
@@ -103,7 +100,6 @@ def run_build_in_container(start_container_cmd, build_log):
             interrupt = True
 
     if build_log:
-        print(f'See the build log: {build_log}')
         build_log_fd.close()
 
     return return_code, interrupt
@@ -152,7 +148,9 @@ def build_kernel(runtime, arch, kconfig, src, out, compiler, make_args):
     if noninteractive:
         start_container_cmd.extend(['-n'])  # start container in the non-interactive mode
         build_log = out_subdir + '/build_log.txt'
+        print(f'Going to write the build log to "{build_log}"')
     else:
+        print('Going to run the container in the interactive mode (without build log)')
         build_log = None
 
     start_container_cmd.extend(['--', 'make'])
@@ -177,6 +175,9 @@ def build_kernel(runtime, arch, kconfig, src, out, compiler, make_args):
     return_code, interrupt = run_build_in_container(start_container_cmd, build_log)
 
     finish_building_kernel(runtime, out_subdir, interrupt)
+
+    if noninteractive:
+        print(f'See the build log: {build_log}')
 
     return return_code
 
