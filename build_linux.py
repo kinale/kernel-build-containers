@@ -75,7 +75,7 @@ def finish_building_kernel(runtime, out_dir, interrupt):
     print(f'The finish_container.sh script returned {return_code}')
 
 
-def run_build_in_container(start_container_cmd, build_log):
+def run_container(start_container_cmd, build_log):
     interrupt = False
     build_log_fd = None
     stdout_destination = None
@@ -84,6 +84,7 @@ def run_build_in_container(start_container_cmd, build_log):
         build_log_fd = open(build_log, 'w', encoding='utf-8')  # noqa: SIM115 # pylint: disable=R1732
         stdout_destination = subprocess.PIPE
 
+    print(f'Run the container: {" ".join(start_container_cmd)}')
     with subprocess.Popen(start_container_cmd, stdout=stdout_destination, stderr=subprocess.STDOUT,
                           universal_newlines=True, bufsize=1) as process:
         try:
@@ -91,7 +92,6 @@ def run_build_in_container(start_container_cmd, build_log):
                 for line in process.stdout:
                     print(f'    {line}', end='\r')
                     build_log_fd.write(line)
-
             return_code = process.wait()
             print(f'The container\'s return code {return_code}')
         except KeyboardInterrupt:
@@ -144,14 +144,13 @@ def build_kernel(runtime, arch, kconfig, src, out, compiler, make_args):
                            compiler, src, out_subdir, '--' + runtime]
 
     noninteractive = 'menuconfig' not in make_args
-
     if noninteractive:
         start_container_cmd.extend(['-n'])  # start container in the non-interactive mode
         build_log = out_subdir + '/build_log.txt'
         print(f'Going to write the build log to "{build_log}"')
     else:
-        print('Going to run the container in the interactive mode (without build log)')
         build_log = None
+        print('Going to run the container in the interactive mode (without build log)')
 
     start_container_cmd.extend(['--', 'make'])
 
@@ -171,8 +170,7 @@ def build_kernel(runtime, arch, kconfig, src, out, compiler, make_args):
 
     start_container_cmd.extend(make_args)
 
-    print(f'Run the container: {" ".join(start_container_cmd)}')
-    return_code, interrupt = run_build_in_container(start_container_cmd, build_log)
+    return_code, interrupt = run_container(start_container_cmd, build_log)
 
     finish_building_kernel(runtime, out_subdir, interrupt)
 
