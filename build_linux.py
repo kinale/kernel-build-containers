@@ -105,7 +105,7 @@ def run_container(start_container_cmd, build_log):
     return return_code, interrupt
 
 
-def get_out_subdir(arch, kconfig, src, out, compiler):
+def prepare_out_subdir(arch, kconfig, src, out, compiler):
     if kconfig:
         assert (out), 'Ouch, the output directory is required for building with the kconfig file'
         kconfig_name_parts = os.path.splitext(os.path.basename(kconfig))
@@ -119,6 +119,13 @@ def get_out_subdir(arch, kconfig, src, out, compiler):
         out_subdir = src
     else:
         out_subdir = out + '/' + arch + NAME_DELIMITER + compiler
+
+    print(f'Output subdirectory for this build: {out_subdir}')
+    if os.path.isdir(out_subdir):
+        print('Output subdirectory already exists, use it (no cleaning!)')
+    else:
+        print('Output subdirectory doesn\'t exist, create it')
+        os.mkdir(out_subdir)
 
     return out_subdir
 
@@ -139,14 +146,7 @@ def prepare_kconfig(kconfig, out_subdir):
 
 
 def build_kernel(runtime, args, make_args):
-    out_subdir = get_out_subdir(args.arch, args.kconfig, args.src, args.out, args.compiler)
-
-    print(f'Output subdirectory for this build: {out_subdir}')
-    if os.path.isdir(out_subdir):
-        print('Output subdirectory already exists, use it (no cleaning!)')
-    else:
-        print('Output subdirectory doesn\'t exist, create it')
-        os.mkdir(out_subdir)
+    out_subdir = prepare_out_subdir(args.arch, args.kconfig, args.src, args.out, args.compiler)
 
     prepare_kconfig(args.kconfig, out_subdir)
 
