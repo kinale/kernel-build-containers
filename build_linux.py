@@ -1,14 +1,14 @@
 #!/usr/bin/python3
 
-# pylint: disable=missing-function-docstring
-
 """
-This tool for building the Linux kernel in containers with selected
-architecture, compiler, output directory, and optional kconfig
+This tool is for building the Linux kernel for various architectures
+with many different compilers in Docker/Podman containers.
 
 SPDX-FileCopyrightText: Alexander Popov <alex.popov@linux.com>
 SPDX-License-Identifier: GPL-3.0-only
 """
+
+# pylint: disable=missing-function-docstring
 
 import argparse
 import filecmp

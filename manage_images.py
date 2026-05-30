@@ -1,7 +1,8 @@
 #!/usr/bin/python3
 
 """
-This tool manages container images for building the Linux kernel with Clang and GCC compilers
+This tool manages the Docker/Podman container images for building
+the Linux kernel or other software with Clang and GCC compilers.
 
 SPDX-FileCopyrightText: Alexander Popov <alex.popov@linux.com>
 SPDX-License-Identifier: GPL-3.0-only
