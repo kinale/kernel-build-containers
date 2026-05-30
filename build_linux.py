@@ -145,13 +145,13 @@ def prepare_kconfig(kconfig, out_subdir):
         print('No kconfig to copy to the output subdirectory')
 
 
-def build_kernel(runtime, args, make_args):
-    out_subdir = prepare_out_subdir(args.arch, args.kconfig, args.src, args.out, args.compiler)
+def build_kernel(runtime, tool_args, make_args):
+    out_subdir = prepare_out_subdir(tool_args.arch, tool_args.kconfig, tool_args.src, tool_args.out, tool_args.compiler)
 
-    prepare_kconfig(args.kconfig, out_subdir)
+    prepare_kconfig(tool_args.kconfig, out_subdir)
 
     start_container_cmd = ['bash', os.path.dirname(os.path.abspath(__file__)) + '/start_container.sh',
-                           args.compiler, args.src, out_subdir, '--' + runtime]
+                           tool_args.compiler, tool_args.src, out_subdir, '--' + runtime]
 
     noninteractive = 'menuconfig' not in make_args
     if noninteractive:
@@ -164,16 +164,16 @@ def build_kernel(runtime, args, make_args):
 
     start_container_cmd.extend(['--', 'make'])
 
-    if out_subdir != args.src:
+    if out_subdir != tool_args.src:
         start_container_cmd.append('O=../out/')
     else:
         print('Going to build the kernel in-place (without \'O=\')')
 
-    if args.compiler.startswith('clang'):
+    if tool_args.compiler.startswith('clang'):
         print('Add arguments for compiling with clang: CC=clang')
         start_container_cmd.extend(['CC=clang'])
 
-    cross_compile_args = get_cross_compile_args(args.arch)
+    cross_compile_args = get_cross_compile_args(tool_args.arch)
     if cross_compile_args:
         print(f'Add arguments for cross-compilation: {" ".join(cross_compile_args)}')
     start_container_cmd.extend(cross_compile_args)
@@ -190,8 +190,8 @@ def build_kernel(runtime, args, make_args):
     return return_code
 
 
-def prepare_make_args(args):
-    make_args = args.make_args[:]
+def prepare_make_args(tool_args):
+    make_args = tool_args.make_args[:]
     forbidden_make_vars = ('O=', 'ARCH=', 'CROSS_COMPILE=', 'CC=')
     if make_args:
         if make_args[0] == '--':
@@ -204,11 +204,11 @@ def prepare_make_args(args):
             if arg.startswith('-j'):
                 sys.exit('[-] ERROR: Don\'t specify \'-j\', by default we run \'make\' in parallel on all CPUs')
 
-    if args.quiet:
+    if tool_args.quiet:
         print('Going to run \'make\' in quiet mode')
         make_args.insert(0, '-s')
 
-    if not args.single_thread:
+    if not tool_args.single_thread:
         cpu_count = os.sysconf('SC_NPROCESSORS_ONLN')
         print(f'Going to run \'make\' on {cpu_count} CPUs')
         make_args = ['-j', str(cpu_count), *make_args]
