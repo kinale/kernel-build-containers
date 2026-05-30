@@ -2,7 +2,7 @@
 name = "kernel-build-containers"
 requires-python = ">= 3.10"
 dynamic = ["version"]
-description = "A tool for building the Linux kernel (or other software) with many different compilers via docker/podman containers"
+description = "A tool for building the Linux kernel or other software with many different compilers in Docker/Podman containers"
 readme = "README.md"
 authors = [
   {name = "Alexander Popov", email = "alex.popov@linux.com"}
