@@ -194,15 +194,15 @@ def main():
                         help='force to use the Podman container engine instead of default Docker')
     mode = parser.add_mutually_exclusive_group()
     mode.add_argument('-l', '--list', action='store_true',
-                        help='show the container images and their IDs')
+                      help='show the container images and their IDs')
     mode.add_argument('-b', '--build', nargs='?', const='all', choices=supported_compilers, metavar='compiler',
-                        help=f'build a container image providing: {" / ".join(supported_compilers)} '
+                      help=f'build a container image providing: {" / ".join(supported_compilers)} '
                               '("all" is default, the tool will build all images if no compiler is specified)')
     mode.add_argument('-r', '--remove', nargs='?', const='all', choices=supported_compilers, metavar='compiler',
-                        help=f'remove container images providing: {" / ".join(supported_compilers)} '
+                      help=f'remove container images providing: {" / ".join(supported_compilers)} '
                               '("all" is default, the tool will remove all images if no compiler is specified)')
     parser.add_argument('-q', '--quiet', action='store_true',
-                    help='suppress the container image build output (for using with --build)')
+                        help='suppress the container image build output (for using with --build)')
     args = parser.parse_args()
 
     if args.docker:
