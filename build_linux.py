@@ -85,7 +85,7 @@ def build_kernel(runtime, arch, kconfig, src, out, compiler, make_args):
         print('No \'-k\' and \'-o\' arguments; skip creating an output subdirectory to allow in-place build')
         out_subdir = src
     elif out == src:
-        print('Same \'-s\' and \'-o\' values; no \'-k\'; skip creating an output subdirectory to allow in-place build')
+        print('Same \'-s\' and \'-o\' values, no \'-k\'; skip creating an output subdirectory to allow in-place build')
         out_subdir = src
     else:
         out_subdir = out + '/' + arch + NAME_DELIMITER + compiler
