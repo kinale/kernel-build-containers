@@ -46,6 +46,7 @@ __Supported GCC versions:__
 | __gcc-13__  | ✓           | ✓       | ✓   | ✓       | ✓       | ✓         | ✓           |
 | __gcc-14__  | ✓           | ✓       | ✓   | ✓       | ✓       | ✓         | ✓           |
 | __gcc-15__  | ✓           | ✓       | ✓   | ✓       | ✓       | ✓         | ✓           |
+| __gcc-16__  | ✓           | ✓       | ✓   | ✓       | ✓       | ✓         | ✓           |
 
 *\* marks a GCC version that doesn't support `gcc-plugins`*
 
@@ -53,7 +54,7 @@ The containers also provide the corresponding versions of `g++`.
 
 __Supported Clang versions:__
 
-`kernel-build-containers` provides all versions of Clang from `clang-5` to `clang-21`.
+`kernel-build-containers` provides all versions of Clang from `clang-5` to `clang-22`.
 
 The Clang compiler binary and corresponding LLVM utilities typically contain all supported backends for cross compiling.
 
@@ -63,7 +64,7 @@ __Get help:__
 
 ```console
 $ python3 manage_images.py -h
-usage: manage_images.py [-h] [-d] [-p] [-l] [-b [compiler]] [-q] [-r [compiler]]
+usage: manage_images.py [-h] [-d | -p] [-l | -b [compiler] | -r [compiler]] [-q]
 
 Manage the images for kernel-build-containers
 
@@ -76,19 +77,19 @@ options:
                         build a container image providing: clang-5 / clang-6 / clang-7 /
                         clang-8 / clang-9 / clang-10 / clang-11 / clang-12 / clang-13 /
                         clang-14 / clang-15 / clang-16 / clang-17 / clang-18 / clang-19 /
-                        clang-20 / clang-21 / gcc-4.9 / gcc-5 / gcc-6 / gcc-7 / gcc-8 /
-                        gcc-9 / gcc-10 / gcc-11 / gcc-12 / gcc-13 / gcc-14 / gcc-15 / all
-                        ("all" is default, the tool will build all images if no compiler is
-                        specified)
-  -q, --quiet           suppress the container image build output (for using with --build)
+                        clang-20 / clang-21 / clang-22 / gcc-4.9 / gcc-5 / gcc-6 / gcc-7 /
+                        gcc-8 / gcc-9 / gcc-10 / gcc-11 / gcc-12 / gcc-13 / gcc-14 /
+                        gcc-15 / gcc-16 / all ("all" is default, the tool will build all
+                        images if no compiler is specified)
   -r, --remove [compiler]
                         remove container images providing: clang-5 / clang-6 / clang-7 /
                         clang-8 / clang-9 / clang-10 / clang-11 / clang-12 / clang-13 /
                         clang-14 / clang-15 / clang-16 / clang-17 / clang-18 / clang-19 /
-                        clang-20 / clang-21 / gcc-4.9 / gcc-5 / gcc-6 / gcc-7 / gcc-8 /
-                        gcc-9 / gcc-10 / gcc-11 / gcc-12 / gcc-13 / gcc-14 / gcc-15 / all
-                        ("all" is default, the tool will remove all images if no compiler is
-                        specified)
+                        clang-20 / clang-21 / clang-22 / gcc-4.9 / gcc-5 / gcc-6 / gcc-7 /
+                        gcc-8 / gcc-9 / gcc-10 / gcc-11 / gcc-12 / gcc-13 / gcc-14 /
+                        gcc-15 / gcc-16 / all ("all" is default, the tool will remove all
+                        images if no compiler is specified)
+  -q, --quiet           suppress the container image build output (for using with --build)
 ```
 
 __Build a single Docker container image:__
@@ -131,16 +132,17 @@ Current status:
  20.04  | 9      | 8      | -
  20.04  | 10     | 9      | -
  20.04  | 11     | 10     | -
- 22.04  | 12     | 11     | fcb8e4d347b3
- 22.04  | 13     | 12     | a46d447c7af3
+ 22.04  | 12     | 11     | -
+ 22.04  | 13     | 12     | -
  22.04  | 14     | 12     | -
- 24.04  | 15     | 13     | 579f6aa4a38d
- 24.04  | 16     | 14     | -
+ 24.04  | 15     | 13     | ee6bfb42352c
+ 24.04  | 16     | 14     | b58f6716b499
  24.04  | 17     | 14     | -
  24.04  | 18     | 14     | -
- 25.10  | 19     | 15     | -
- 25.10  | 20     | 15     | -
- 25.10  | 21     | 15     | -
+ 26.04  | 19     | 15     | dca3c87ef046
+ 26.04  | 20     | 15     | 60b1c014eabf
+ 26.04  | 21     | 16     | -
+ 26.04  | 22     | 16     | -
 --------------------------------------------
 ```
 
@@ -161,23 +163,24 @@ Current status:
 --------------------------------------------
  Ubuntu | Clang  | GCC    | Docker Image ID
 --------------------------------------------
- 16.04  | 5      | 4.9    | 84de06274519
- 16.04  | 6      | 5      | 9f1a2dd62fdd
- 18.04  | 7      | 6      | 112aac42ce4c
- 18.04  | 8      | 7      | 9aba209703da
- 20.04  | 9      | 8      | c1e7857ea7b9
- 20.04  | 10     | 9      | 70773f4ade91
- 20.04  | 11     | 10     | 794661e2251e
- 22.04  | 12     | 11     | a3edfb04cb59
- 22.04  | 13     | 12     | fd3d31b4b29b
- 22.04  | 14     | 12     | 9f78a073c0a2
- 24.04  | 15     | 13     | a48106dc194e
- 24.04  | 16     | 14     | 1c0aba835f6c
- 24.04  | 17     | 14     | 18f5a5c70571
- 24.04  | 18     | 14     | 3094501608ca
- 25.10  | 19     | 15     | b92832c98d2e
- 25.10  | 20     | 15     | 6cca70656bf3
- 25.10  | 21     | 15     | 9b3a8c479067
+ 16.04  | 5      | 4.9    | eeea78335b02
+ 16.04  | 6      | 5      | 145f1682a11e
+ 18.04  | 7      | 6      | 3b207dd913c5
+ 18.04  | 8      | 7      | 63592d5db90b
+ 20.04  | 9      | 8      | b782eed97d1b
+ 20.04  | 10     | 9      | c438ddfdcbd1
+ 20.04  | 11     | 10     | 1673127409d5
+ 22.04  | 12     | 11     | d1d25388d38c
+ 22.04  | 13     | 12     | f47947f485cb
+ 22.04  | 14     | 12     | a7d0a91f4f07
+ 24.04  | 15     | 13     | d2890c6ef101
+ 24.04  | 16     | 14     | 448111f267bd
+ 24.04  | 17     | 14     | 7f0c4d6a6b18
+ 24.04  | 18     | 14     | f044bde4f172
+ 26.04  | 19     | 15     | e206f91fe747
+ 26.04  | 20     | 15     | 0da2ec69cccc
+ 26.04  | 21     | 16     | 04f9f2efb289
+ 26.04  | 22     | 16     | fad6f9889b42
 --------------------------------------------
 ```
 
@@ -185,36 +188,38 @@ The created Docker container images look like this:
 
 ```console
 $ sudo docker images
-REPOSITORY               TAG        IMAGE ID       CREATED          SIZE
-kernel-build-container   clang-21   dc9408fe5e57   8 seconds ago    2.55GB
-kernel-build-container   gcc-15     dc9408fe5e57   8 seconds ago    2.55GB
-kernel-build-container   clang-20   1d60452476af   29 seconds ago   2.6GB
-kernel-build-container   clang-19   02ce18c03133   52 seconds ago   2.5GB
-kernel-build-container   clang-18   7915eeb58d81   2 minutes ago    2.54GB
-kernel-build-container   gcc-14     7915eeb58d81   2 minutes ago    2.54GB
-kernel-build-container   clang-17   dc7862ae9f4d   2 minutes ago    2.49GB
-kernel-build-container   clang-16   ddc1d61f0084   3 minutes ago    2.51GB
-kernel-build-container   clang-15   05fc44fe3898   4 minutes ago    2.09GB
-kernel-build-container   gcc-13     05fc44fe3898   4 minutes ago    2.09GB
-kernel-build-container   clang-14   eff4eb8fe69c   5 minutes ago    2.11GB
-kernel-build-container   gcc-12     eff4eb8fe69c   5 minutes ago    2.11GB
-kernel-build-container   clang-13   1ddeb93f6b94   5 minutes ago    2.19GB
-kernel-build-container   clang-12   d404aceb2226   8 minutes ago    1.94GB
-kernel-build-container   gcc-11     d404aceb2226   8 minutes ago    1.94GB
-kernel-build-container   clang-11   adda00aa43ee   9 minutes ago    1.82GB
-kernel-build-container   gcc-10     adda00aa43ee   9 minutes ago    1.82GB
-kernel-build-container   clang-10   653b6928b6e2   10 minutes ago   1.57GB
-kernel-build-container   gcc-9      653b6928b6e2   10 minutes ago   1.57GB
-kernel-build-container   clang-9    b2990a8b2d7e   10 minutes ago   1.72GB
-kernel-build-container   gcc-8      b2990a8b2d7e   10 minutes ago   1.72GB
-kernel-build-container   clang-8    4be16e62d9b7   12 minutes ago   1.55GB
-kernel-build-container   gcc-7      4be16e62d9b7   12 minutes ago   1.55GB
-kernel-build-container   clang-7    c7015a9b8345   13 minutes ago   1.46GB
-kernel-build-container   gcc-6      c7015a9b8345   13 minutes ago   1.46GB
-kernel-build-container   clang-6    aadd8a8e8af1   14 minutes ago   1.35GB
-kernel-build-container   gcc-5      aadd8a8e8af1   14 minutes ago   1.35GB
-kernel-build-container   clang-5    adc0418c879a   14 minutes ago   1.84GB
-kernel-build-container   gcc-4.9    adc0418c879a   14 minutes ago   1.84GB
+IMAGE                             ID             DISK USAGE   CONTENT SIZE   EXTRA
+kernel-build-container:clang-10   c438ddfdcbd1       2.12GB             0B        
+kernel-build-container:clang-11   1673127409d5       2.45GB             0B        
+kernel-build-container:clang-12   d1d25388d38c       2.61GB             0B        
+kernel-build-container:clang-13   f47947f485cb        2.9GB             0B        
+kernel-build-container:clang-14   a7d0a91f4f07       2.82GB             0B        
+kernel-build-container:clang-15   d2890c6ef101       2.88GB             0B        
+kernel-build-container:clang-16   448111f267bd       3.35GB             0B        
+kernel-build-container:clang-17   7f0c4d6a6b18       3.33GB             0B        
+kernel-build-container:clang-18   f044bde4f172       3.38GB             0B        
+kernel-build-container:clang-19   e206f91fe747       3.32GB             0B        
+kernel-build-container:clang-20   0da2ec69cccc       3.38GB             0B        
+kernel-build-container:clang-21   04f9f2efb289       6.74GB             0B        
+kernel-build-container:clang-22   fad6f9889b42        6.8GB             0B        
+kernel-build-container:clang-5    eeea78335b02        2.1GB             0B        
+kernel-build-container:clang-6    145f1682a11e       1.73GB             0B        
+kernel-build-container:clang-7    3b207dd913c5       1.93GB             0B        
+kernel-build-container:clang-8    63592d5db90b          2GB             0B        
+kernel-build-container:clang-9    b782eed97d1b       2.26GB             0B        
+kernel-build-container:gcc-10     1673127409d5       2.45GB             0B        
+kernel-build-container:gcc-11     d1d25388d38c       2.61GB             0B        
+kernel-build-container:gcc-12     a7d0a91f4f07       2.82GB             0B        
+kernel-build-container:gcc-13     d2890c6ef101       2.88GB             0B        
+kernel-build-container:gcc-14     f044bde4f172       3.38GB             0B        
+kernel-build-container:gcc-15     0da2ec69cccc       3.38GB             0B        
+kernel-build-container:gcc-16     fad6f9889b42        6.8GB             0B        
+kernel-build-container:gcc-4.9    eeea78335b02        2.1GB             0B        
+kernel-build-container:gcc-5      145f1682a11e       1.73GB             0B        
+kernel-build-container:gcc-6      3b207dd913c5       1.93GB             0B        
+kernel-build-container:gcc-7      63592d5db90b          2GB             0B        
+kernel-build-container:gcc-8      b782eed97d1b       2.26GB             0B        
+kernel-build-container:gcc-9      c438ddfdcbd1       2.12GB             0B        
 ```
 
 ## How to run a container
@@ -246,7 +251,7 @@ Mount source code directory "/home/a13x/linux-stable/linux-stable/" at "/src"
 Mount build output directory "/home/a13x/linux-stable/build_out/" at "/out"
 Gonna run bash
 
-a13x@38f63939b504:~/src$
+a13x@1f9c2baec240:/src$
 ```
 
 __Execute a command in the container:__
@@ -271,7 +276,7 @@ __Get help:__
 
 ```console
 $ python3 build_linux.py --help
-usage: build_linux.py [-h] [-d] [-p] -a ARCH -c COMPILER [-k KCONFIG] -s SRC [-o OUT] [-q]
+usage: build_linux.py [-h] [-d | -p] -a ARCH -c COMPILER [-k KCONFIG] -s SRC [-o OUT] [-q]
                       [-t]
                       ...
 
@@ -290,8 +295,9 @@ options:
                         compiler for building (clang-5 / clang-6 / clang-7 / clang-8 /
                         clang-9 / clang-10 / clang-11 / clang-12 / clang-13 / clang-14 /
                         clang-15 / clang-16 / clang-17 / clang-18 / clang-19 / clang-20 /
-                        clang-21 / gcc-4.9 / gcc-5 / gcc-6 / gcc-7 / gcc-8 / gcc-9 / gcc-10
-                        / gcc-11 / gcc-12 / gcc-13 / gcc-14 / gcc-15)
+                        clang-21 / clang-22 / gcc-4.9 / gcc-5 / gcc-6 / gcc-7 / gcc-8 /
+                        gcc-9 / gcc-10 / gcc-11 / gcc-12 / gcc-13 / gcc-14 / gcc-15 /
+                        gcc-16)
   -k, --kconfig KCONFIG
                         path to kernel kconfig file (optional argument)
   -s, --src SRC         Linux kernel sources directory
@@ -339,8 +345,8 @@ make[1]: Entering directory '/out'
 *** Execute 'make' to start the build or try 'make help'.
 
 make[1]: Leaving directory '/out'
-The container returned 0
-Finish building the kernel
+The container's return code 0
+Finishing the container
 Only remove the container id file:
     Search "container.id" file in build output directory "/home/a13x/linux-stable/build_out/experiment__arm64__gcc-13"
     NO such file, nothing to do, exit
@@ -378,13 +384,13 @@ Run the container: bash /home/a13x/kernel-build-containers/start_container.sh gc
       GEN     Makefile
 ...
     make[1]: Leaving directory '/out'
-The container returned 0
-Finish building the kernel
+The container's return code 0
+Finishing the container
 Only remove the container id file:
     Search "container.id" file in build output directory "/home/a13x/linux-stable/build_out/experiment__arm64__gcc-13"
     Hey, we gonna use sudo for running the container
     OK, "container.id" file exists, removing it
-    OK, container 12566459b1f6784a3b332791d3e7796ab69ea45df9739ab2fbe2a7be0c0b39dd doesn't run
+    OK, container b2bf9c17705ae1786898ef2755dd340c7d8e6e459faaf1534b5d0059281f4bab doesn't run
 The finish_container.sh script returned 0
 See the build log: /home/a13x/linux-stable/build_out/experiment__arm64__gcc-13/build_log.txt
 Done, see the results
@@ -456,13 +462,13 @@ Run the container: bash /home/a13x/kernel-build-containers/start_container.sh cl
     #
     # configuration written to .config
     #
-The container returned 0
-Finish building the kernel
+The container's return code 0
+Finishing the container
 Only remove the container id file:
     Search "container.id" file in build output directory "/home/a13x/linux-stable/linux-stable"
     Hey, we gonna use sudo for running the container
     OK, "container.id" file exists, removing it
-    OK, container 02851894aa6a6f5c1b1e0c72cbd3917e2e82349f8ffb3281dc36454abb98391a doesn't run
+    OK, container adcf6f32a5e1106405e892c2fa048a33c504d5b6f3761979fd054bb3134619d9 doesn't run
 The finish_container.sh script returned 0
 See the build log: /home/a13x/linux-stable/linux-stable/build_log.txt
 Done, see the results
@@ -491,6 +497,7 @@ __Expected output, if the containers are not running:__
 ```console
 Docker container engine is chosen (default)
 [!] INFO: We need "sudo" for working with Docker containers
+...
 
 Current status:
 --------------------------------------------
@@ -510,9 +517,10 @@ Current status:
  24.04  | 16     | 14     | -
  24.04  | 17     | 14     | -
  24.04  | 18     | 14     | -
- 25.10  | 19     | 15     | -
- 25.10  | 20     | 15     | -
- 25.10  | 21     | 15     | -
+ 26.04  | 19     | 15     | -
+ 26.04  | 20     | 15     | -
+ 26.04  | 21     | 16     | -
+ 26.04  | 22     | 16     | -
 --------------------------------------------
 ```
 
@@ -520,10 +528,9 @@ __Expected output, if some containers are running:__
 
 ```console
 ...
-Remove the container image 907c031bb9f6 providing Clang 15 and GCC 13
-[!] WARNING: Removing the image 907c031bb9f6 failed, some containers use it
+Remove the container image d2890c6ef101 providing Clang 15 and GCC 13
+[!] WARNING: Removing the image d2890c6ef101 failed, some containers use it
 ...
-
 [!] WARNING: failed to remove 1 container image(s), see the log above
 
 Current status:
@@ -540,13 +547,14 @@ Current status:
  22.04  | 12     | 11     | -
  22.04  | 13     | 12     | -
  22.04  | 14     | 12     | -
- 24.04  | 15     | 13     | 907c031bb9f6
+ 24.04  | 15     | 13     | d2890c6ef101
  24.04  | 16     | 14     | -
  24.04  | 17     | 14     | -
  24.04  | 18     | 14     | -
- 25.10  | 19     | 15     | -
- 25.10  | 20     | 15     | -
- 25.10  | 21     | 15     | -
+ 26.04  | 19     | 15     | -
+ 26.04  | 20     | 15     | -
+ 26.04  | 21     | 16     | -
+ 26.04  | 22     | 16     | -
 --------------------------------------------
 ```
 
