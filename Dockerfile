@@ -12,6 +12,7 @@ RUN set -ex; \
 ARG GCC_VERSION
 RUN set -ex; \
     if [ "$GCC_VERSION" ]; then \
+      apt-get update; \
       apt-get install -y -q gcc-${GCC_VERSION} g++-${GCC_VERSION} gcc-${GCC_VERSION}-plugin-dev \
         gcc-${GCC_VERSION}-aarch64-linux-gnu g++-${GCC_VERSION}-aarch64-linux-gnu \
         gcc-${GCC_VERSION}-arm-linux-gnueabi g++-${GCC_VERSION}-arm-linux-gnueabi \
@@ -51,6 +52,7 @@ RUN set -ex; \
 ARG CLANG_VERSION
 RUN set -ex; \
     if [ "$CLANG_VERSION" ]; then \
+      apt-get update; \
       if [ "$CLANG_VERSION" = "5" ] || [ "$CLANG_VERSION" = "6" ]; then \
         CLANG_VERSION="${CLANG_VERSION}.0"; \
         apt-get install -y -q clang-${CLANG_VERSION} lld-${CLANG_VERSION} clang-tools-6.0; \
