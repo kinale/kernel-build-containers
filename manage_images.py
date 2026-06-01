@@ -136,17 +136,17 @@ class ContainerImage:
 
     def identify_runtime_cmd(self):
         """Identify the commands for working with the container runtime"""
+        cmd = [self.runtime, 'ps']
         try:
-            cmd = [self.runtime, 'ps']
             out = subprocess.run(cmd, text=True, check=False, capture_output=True)
-            if out.returncode == 0:
-                return [self.runtime]
-            if self.runtime == 'docker' and 'permission denied' in out.stderr:
-                print('[!] INFO: We need "sudo" for working with Docker containers')
-                return ['sudo', self.runtime]
-            sys.exit(f'[-] ERROR: Testing "{" ".join(cmd)}" gives unknown error:\n{out.stderr}')
         except FileNotFoundError:
             sys.exit('[-] ERROR: The container runtime is not installed')
+        if out.returncode == 0:
+            return [self.runtime]
+        if self.runtime == 'docker' and 'permission denied' in out.stderr:
+            print('[!] INFO: We need "sudo" for working with Docker containers')
+            return ['sudo', self.runtime]
+        sys.exit(f'[-] ERROR: Testing "{" ".join(cmd)}" gives unknown error:\n{out.stderr}')
 
 
 def build_images(needed_compiler, images):
