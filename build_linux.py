@@ -29,6 +29,7 @@ supported_compilers = ['clang-5', 'clang-6', 'clang-7', 'clang-8',
 
 NAME_DELIMITER = '__'
 
+
 def prepare_out_subdir(arch, kconfig, src, out, compiler):
     if kconfig:
         assert (out), 'Ouch, the output directory is required for building with the kconfig file'
