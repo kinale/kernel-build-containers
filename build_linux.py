@@ -29,82 +29,6 @@ supported_compilers = ['clang-5', 'clang-6', 'clang-7', 'clang-8',
 
 NAME_DELIMITER = '__'
 
-
-def get_cross_compile_args(arch):
-    args_list = []
-    if arch == 'i386':
-        args_list.append('ARCH=i386')
-    elif arch == 'arm64':
-        args_list.append('ARCH=arm64')
-        args_list.append('CROSS_COMPILE=aarch64-linux-gnu-')
-    elif arch == 'arm':
-        args_list.append('ARCH=arm')
-        args_list.append('CROSS_COMPILE=arm-linux-gnueabi-')
-    elif arch == 'riscv':
-        args_list.append('ARCH=riscv')
-        args_list.append('CROSS_COMPILE=riscv64-linux-gnu-')
-    elif arch == 'powerpc':
-        args_list.append('ARCH=powerpc')
-        args_list.append('CROSS_COMPILE=powerpc-linux-gnu-')
-    elif arch == 'powerpc64':
-        args_list.append('ARCH=powerpc')
-        args_list.append('CROSS_COMPILE=powerpc64-linux-gnu-')
-    elif arch == 'powerpc64le':
-        args_list.append('ARCH=powerpc')
-        args_list.append('CROSS_COMPILE=powerpc64le-linux-gnu-')
-    return args_list
-
-
-def finish_building_kernel(runtime, out_dir, interrupt):
-    print('Finishing the container')
-    finish_container_cmd = ['bash', os.path.dirname(os.path.abspath(__file__)) + '/finish_container.sh', runtime]
-    if interrupt:
-        print('Kill the container and remove the container id file:')
-        finish_container_cmd.extend(['kill'])
-    else:
-        print('Only remove the container id file:')
-        finish_container_cmd.extend(['nokill'])
-    finish_container_cmd.extend([out_dir])
-
-    with subprocess.Popen(finish_container_cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
-                          universal_newlines=True, bufsize=1) as process:
-        for line in process.stdout:
-            print(f'    {line}', end='\r')
-        return_code = process.wait()
-
-    print(f'The finish_container.sh script returned {return_code}')
-
-
-def run_container(start_container_cmd, build_log):
-    interrupt = False
-    build_log_fd = None
-    stdout_destination = None
-
-    if build_log:
-        build_log_fd = open(build_log, 'w', encoding='utf-8')  # noqa: SIM115 # pylint: disable=R1732
-        stdout_destination = subprocess.PIPE
-
-    print(f'Run the container: {" ".join(start_container_cmd)}')
-    with subprocess.Popen(start_container_cmd, stdout=stdout_destination, stderr=subprocess.STDOUT,
-                          universal_newlines=True, bufsize=1) as process:
-        try:
-            if build_log:
-                for line in process.stdout:
-                    print(f'    {line}', end='\r')
-                    build_log_fd.write(line)
-            return_code = process.wait()
-            print(f'The container\'s return code {return_code}')
-        except KeyboardInterrupt:
-            return_code = 128 + signal.SIGINT
-            print(f'[!] WARNING: Got keyboard interrupt, stopping (return code {return_code})')
-            interrupt = True
-
-    if build_log:
-        build_log_fd.close()
-
-    return return_code, interrupt
-
-
 def prepare_out_subdir(arch, kconfig, src, out, compiler):
     if kconfig:
         assert (out), 'Ouch, the output directory is required for building with the kconfig file'
@@ -143,6 +67,81 @@ def prepare_kconfig(kconfig, out_subdir):
             sys.exit('[-] ERROR: Kconfig files are different, check the diff and consider copying')
     else:
         print('No kconfig to copy to the output subdirectory')
+
+
+def get_cross_compile_args(arch):
+    args_list = []
+    if arch == 'i386':
+        args_list.append('ARCH=i386')
+    elif arch == 'arm64':
+        args_list.append('ARCH=arm64')
+        args_list.append('CROSS_COMPILE=aarch64-linux-gnu-')
+    elif arch == 'arm':
+        args_list.append('ARCH=arm')
+        args_list.append('CROSS_COMPILE=arm-linux-gnueabi-')
+    elif arch == 'riscv':
+        args_list.append('ARCH=riscv')
+        args_list.append('CROSS_COMPILE=riscv64-linux-gnu-')
+    elif arch == 'powerpc':
+        args_list.append('ARCH=powerpc')
+        args_list.append('CROSS_COMPILE=powerpc-linux-gnu-')
+    elif arch == 'powerpc64':
+        args_list.append('ARCH=powerpc')
+        args_list.append('CROSS_COMPILE=powerpc64-linux-gnu-')
+    elif arch == 'powerpc64le':
+        args_list.append('ARCH=powerpc')
+        args_list.append('CROSS_COMPILE=powerpc64le-linux-gnu-')
+    return args_list
+
+
+def run_container(start_container_cmd, build_log):
+    interrupt = False
+    build_log_fd = None
+    stdout_destination = None
+
+    if build_log:
+        build_log_fd = open(build_log, 'w', encoding='utf-8')  # noqa: SIM115 # pylint: disable=R1732
+        stdout_destination = subprocess.PIPE
+
+    print(f'Run the container: {" ".join(start_container_cmd)}')
+    with subprocess.Popen(start_container_cmd, stdout=stdout_destination, stderr=subprocess.STDOUT,
+                          universal_newlines=True, bufsize=1) as process:
+        try:
+            if build_log:
+                for line in process.stdout:
+                    print(f'    {line}', end='\r')
+                    build_log_fd.write(line)
+            return_code = process.wait()
+            print(f'The container\'s return code {return_code}')
+        except KeyboardInterrupt:
+            return_code = 128 + signal.SIGINT
+            print(f'[!] WARNING: Got keyboard interrupt, stopping (return code {return_code})')
+            interrupt = True
+
+    if build_log:
+        build_log_fd.close()
+
+    return return_code, interrupt
+
+
+def finish_building_kernel(runtime, out_dir, interrupt):
+    print('Finishing the container')
+    finish_container_cmd = ['bash', os.path.dirname(os.path.abspath(__file__)) + '/finish_container.sh', runtime]
+    if interrupt:
+        print('Kill the container and remove the container id file:')
+        finish_container_cmd.extend(['kill'])
+    else:
+        print('Only remove the container id file:')
+        finish_container_cmd.extend(['nokill'])
+    finish_container_cmd.extend([out_dir])
+
+    with subprocess.Popen(finish_container_cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
+                          universal_newlines=True, bufsize=1) as process:
+        for line in process.stdout:
+            print(f'    {line}', end='\r')
+        return_code = process.wait()
+
+    print(f'The finish_container.sh script returned {return_code}')
 
 
 def build_kernel(runtime, tool_args, make_args):
