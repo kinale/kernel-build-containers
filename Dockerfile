@@ -80,7 +80,7 @@ ARG GNAME
 ARG GID
 RUN set -x; \
     # These commands are allowed to fail (it happens for root, for example).
-    # The result will be checked in the next RUN.
+    # The result will be checked in the last RUN.
     userdel -r `getent passwd ${UID} | cut -d : -f 1` > /dev/null 2>&1; \
     groupdel -f `getent group ${GID} | cut -d : -f 1` > /dev/null 2>&1; \
     groupadd -g ${GID} ${GNAME}; \
@@ -90,6 +90,12 @@ RUN set -x; \
     mkdir /out; \
     chown -R ${UNAME}:${GNAME} /out; \
     echo "${UNAME} ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
+
+RUN set -ex; \
+    apt-get update; \
+    apt-get install -y -q ccache; \
+    mkdir -p /home/${UNAME}/.cache/ccache; \
+    chown -R ${UNAME}:${GNAME} /home/${UNAME}/.cache
 
 USER ${UNAME}:${GNAME}
 WORKDIR /src
