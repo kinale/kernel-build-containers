@@ -607,7 +607,7 @@ Full test for building the Linux kernel:
 $ bash tests/tests_for_build_linux.sh
 ```
 
-Fast mode: test only `x86_64` and skip building kernel images (has less code coverage):
+Fast mode: skip building kernel images:
 
 ```console
 $ bash tests/tests_for_build_linux.sh --fast
