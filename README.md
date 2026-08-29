@@ -1,8 +1,10 @@
 # kernel-build-containers
 
 [![GitHub tag (latest by date)](https://img.shields.io/github/v/tag/a13xp0p0v/kernel-build-containers?label=release)](https://github.com/a13xp0p0v/kernel-build-containers/tags)
-[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
-[![static analysis](https://github.com/a13xp0p0v/kernel-build-containers/workflows/static%20analysis/badge.svg)](https://github.com/a13xp0p0v/kernel-build-containers/actions/workflows/static_analysis.yml)
+[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)<br />
+[![static analysis](https://github.com/a13xp0p0v/kernel-build-containers/workflows/static%20analysis/badge.svg)](https://github.com/a13xp0p0v/kernel-build-containers/actions/workflows/static_analysis.yml)<br />
+[![tests for build_linux](https://github.com/a13xp0p0v/kernel-build-containers/workflows/tests%20for%20build_linux/badge.svg)](https://github.com/a13xp0p0v/kernel-build-containers/actions/workflows/tests_for_build_linux.yml)<br />
+[![tests for manage_images](https://github.com/a13xp0p0v/kernel-build-containers/workflows/tests%20for%20manage_images/badge.svg)](https://github.com/a13xp0p0v/kernel-build-containers/actions/workflows/tests_for_manage_images.yml)<br />
 
 This project provides containers for building the Linux kernel (or other software) with many different compilers.
 
