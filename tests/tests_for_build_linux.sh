@@ -30,9 +30,8 @@ declare -A EXPECTED_IMAGES=(
 FAST=0
 
 if [ "${1:-}" = "--fast" ]; then
-	# In the fast mode, we test only x86_64 and skip building kernel images
+	# In the fast mode, we skip building kernel images
 	FAST=1
-	ARCHS=("x86_64")
 fi
 
 fail() {
