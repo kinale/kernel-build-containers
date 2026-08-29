@@ -6,11 +6,11 @@ permissions:
 on:
   push:
     branches: [ master ]
-  pull_request:
-    branches: [ master ]
 
 jobs:
   tests_for_manage_images:
+
+    if: github.repository == 'a13xp0p0v/kernel-build-containers'
 
     runs-on: ubuntu-latest
 
@@ -43,3 +43,18 @@ jobs:
     - name: Test the image management
       run: |
         bash tests/tests_for_manage_images.sh
+
+    - name: Prepare the final coverage report
+      run: |
+        coverage xml -i -o coverage.xml
+
+    - name: Handle coverage
+      uses: codecov/codecov-action@v7
+      env:
+        CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+      with:
+        files: ./coverage.xml
+        flags: tests_for_manage_images
+        name: tests_for_manage_images_upload
+        fail_ci_if_error: true
+        verbose: true
